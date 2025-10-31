@@ -1,71 +1,20 @@
-# whitespace-ignore-search README
+# Whitespace Ignore Search
 
-This is the README for your extension "whitespace-ignore-search". After writing up a brief description, we recommend including the following sections.
+## 概要
+入力文字列を空白・改行無視の正規表現パターンに変換し、VSCode の検索欄に自動挿入する拡張機能です。  
+挿入された正規表現をひな形として、ユーザーはさらに詳細な検索や置換を **ファイル横断検索** で行うことができます。
 
-## Features
+## インストール（社内配布）
+1. 生成された `.vsix` ファイルを社内共有フォルダから取得
+2. VSCode で `拡張機能 → ・・・ → VSIX からインストール` を選択
+3. インストール完了後、コマンドパレット（Ctrl+Shift+P）で `空白・改行無視検索パターン生成` を実行
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 使い方
+1. コマンドパレットで `空白・改行無視検索パターン生成` を選択
+2. 検索したい文字列を入力
+3. VSCode の検索パネル（Ctrl+Shift+F）に空白・改行無視パターンが挿入され、検索開始
+4. 必要に応じてパターンを編集して検索・置換を実行
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+## 注意点
+- この拡張は検索パターンの生成に特化しており、直接の置換機能はありません
+- 正規表現に慣れていない場合、生成されたパターンをそのまま使用すると意図しない一致が発生する可能性があります

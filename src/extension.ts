@@ -5,84 +5,41 @@ export function activate(context: vscode.ExtensionContext) {
     'extension.ignoreWhitespaceSearch',
     async () => {
       const query = await vscode.window.showInputBox({
-        prompt: '検索語を入力（空白・改行を無視しつつ正規表現も使用可）'
+        prompt: '検索語を入力（空白・改行を無視しつつ正規表現検索）',
       });
       if (!query) return;
 
-      const replaceText = await vscode.window.showInputBox({
-        prompt: '置換後の文字列（スキップする場合は空のまま）'
+      // 改行も無視できるよう拡張した正規表現を生成
+      const pattern = injectWhitespaceAndNewlineTolerance(query);
+
+      // VSCode の検索欄に正規表現を注入
+      await vscode.commands.executeCommand('workbench.action.findInFiles', {
+        query: pattern,
+        triggerSearch: true,
+        isRegex: true,
+        matchWholeWord: false,
+        isCaseSensitive: false,
       });
 
-      const confirm = await vscode.window.showQuickPick(
-        ['現在のファイル', 'ワークスペース全体'],
-        { placeHolder: '検索範囲を選択' }
+      vscode.window.showInformationMessage(
+        '空白・改行無視の正規表現検索を開始しました（Ctrl+Shift+F で確認できます）'
       );
-      if (!confirm) return;
-
-      const pattern = injectWhitespaceTolerance(query);
-      const regex = new RegExp(pattern, 'gis');
-
-      if (confirm === '現在のファイル') {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-
-        const text = editor.document.getText();
-
-        if (replaceText && replaceText.length > 0) {
-          // 🔁 置換処理
-          const newText = text.replace(regex, replaceText);
-          const fullRange = new vscode.Range(
-            editor.document.positionAt(0),
-            editor.document.positionAt(text.length)
-          );
-          await editor.edit(editBuilder => editBuilder.replace(fullRange, newText));
-          vscode.window.showInformationMessage('置換が完了しました。');
-        } else {
-          // 🔍 検索のみ → ハイライト表示
-          const matches = [...text.matchAll(regex)];
-          if (matches.length === 0) {
-            vscode.window.showInformationMessage('一致する箇所はありません。');
-            return;
-          }
-
-          const ranges = matches.map(m => {
-            const start = editor.document.positionAt(m.index!);
-            const end = editor.document.positionAt(m.index! + m[0].length);
-            return new vscode.Range(start, end);
-          });
-
-          const highlight = vscode.window.createTextEditorDecorationType({
-            backgroundColor: 'rgba(255, 215, 0, 0.3)', // 薄い黄色
-            border: '1px solid rgba(255, 200, 0, 0.8)',
-          });
-
-          editor.setDecorations(highlight, ranges);
-          vscode.window.showInformationMessage(`${matches.length}件一致しました。`);
-        }
-      } else {
-        // 🔎 ワークスペース全体検索
-        (vscode.workspace as any).findTextInFiles({ pattern, isRegExp: true }, (result: any) => {
-          vscode.window.showInformationMessage(`一致: ${result.uri.fsPath}`);
-        });
-      }
     }
   );
 
   context.subscriptions.push(disposable);
 }
 
-/** 空白無視のため \s* を挿入 */
-function injectWhitespaceTolerance(input: string): string {
-  let result = '';
-  let inBracket = false;
-  for (let i = 0; i < input.length; i++) {
-    const ch = input[i];
-    if (ch === '[') inBracket = true;
-    if (ch === ']') inBracket = false;
-    result += ch;
-    if (!inBracket && i < input.length - 1) result += '\\s*';
-  }
-  return result;
+/**
+ * 空白・改行無視対応の正規表現パターンを生成する
+ * 例: "検索 文字列" → "検(?:\\s|\\r?\\n)*索(?:\\s|\\r?\\n)*文(?:\\s|\\r?\\n)*字(?:\\s|\\r?\\n)*列"
+ */
+function injectWhitespaceAndNewlineTolerance(input: string): string {
+  // 正規表現メタ文字をすべてエスケープ
+  const escaped = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  // 各文字の間に (?:\s|\r?\n)* を挿入（空白や改行を無視）
+  return escaped.split('').join('(?:\\s|\\r?\\n)*');
 }
 
 export function deactivate() {}
