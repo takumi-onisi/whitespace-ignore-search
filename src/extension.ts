@@ -132,42 +132,74 @@ function injectWhitespaceAndNewlineToleranceVSCode(input: string): string {
 // }
 
 function injectWhitespaceToleranceSmart(input: string): string {
+  // トークン化: エスケープ済み1文字(\.) or 改行以外の1文字
   const tokens = [...input.matchAll(/\\.|[^\r\n]/g)].map(m => m[0]);
   const result: string[] = [];
-  let inCharClass = false; // [ ... ] 内かどうか
+  let inCharClass = false;
   const whitespacePattern = '(?:\\s|\\r?\\n)*';
+  let lastWasWhitespacePattern = false; // 直前に whitespacePattern を挿入したか
+  let pendingLiteralWhitespace = false;  // 入力中に実際の空白文字が見つかったか
 
   for (let i = 0; i < tokens.length; i++) {
     const current = tokens[i];
     const next = tokens[i + 1];
 
-    // 文字クラスの開始検知
+    // 文字クラスの開始/終了管理
     if (current === '[' && !inCharClass) inCharClass = true;
     if (current === ']' && inCharClass) inCharClass = false;
 
+    // ① 実入力の空白（半角スペース/タブなど）を検出したら
+    //    -> すぐ出力せず pendingLiteralWhitespace フラグを立てて次の非空白トークン時にまとめて処理する
+    if (/^[ \t]+$/.test(current)) {
+      pendingLiteralWhitespace = true;
+      continue; // 空白トークンはそのまま出力しない
+    }
+
+    // ② 文字クラス内はそのまま current を push（かつ空白フラグクリア）
+    if (inCharClass) {
+      // 文字クラス内部では pendingLiteralWhitespace があっても挿入しない仕様
+      result.push(current);
+      lastWasWhitespacePattern = false;
+      pendingLiteralWhitespace = false;
+      continue;
+    }
+
+    // ③ pendingLiteralWhitespace が立っている場合はここでまとめて whitespacePattern を入れる
+    if (pendingLiteralWhitespace) {
+      if (!lastWasWhitespacePattern) {
+        result.push(whitespacePattern);
+        lastWasWhitespacePattern = true;
+      }
+      pendingLiteralWhitespace = false;
+    }
+
+    // ④ current（非空白トークン）を出力
     result.push(current);
+    lastWasWhitespacePattern = false; // 現在はトークンを出力したのでパターンフラグはリセット
 
-    // 文字クラス内では何もしない
-    if (inCharClass) continue;
-
-    // 挿入判定（連続空白回避つき）
+    // ⑤ next が存在し、かつ挿入してよい条件なら whitespacePattern を入れる
+    //    - next が非空白で、かつ current/next が正規表現メタでない
     if (
       next &&
+      !/^[ \t]+$/.test(next) &&          // next が実入力の空白でない
       !isRegexMeta(current) &&
       !isRegexMeta(next) &&
       !inCharClass
     ) {
-      // 直前に同じ空白パターンを入れていない場合のみ追加
-      if (result[result.length - 1] !== whitespacePattern) {
+      if (!lastWasWhitespacePattern) {
         result.push(whitespacePattern);
+        lastWasWhitespacePattern = true;
       }
     }
+    // ※ next が実入力空白なら、pendingLiteralWhitespace が次ループで true になるので、
+    //    その時に whitespacePattern を入れる（重複防止される）
   }
 
   return result.join('');
 }
 
 function isRegexMeta(token: string): boolean {
+  // エスケープペア (^) を含むトークンもメタ扱いする
   return /^\\.|[()|[\]{}+*?.^$]/.test(token);
 }
 
