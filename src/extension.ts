@@ -31,70 +31,35 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function injectWhitespaceToleranceSmart(input: string): string {
-  // トークン化: エスケープ済み1文字(\.) or 改行以外の1文字
-  const tokens = [...input.matchAll(/\\.|[^\r\n]/g)].map(m => m[0]);
+  // トークン化の強化: エスケープ文字、文字クラス、量指定子、または1文字
+  // 修正ポイント: 量指定子 (+, *, ?, {n,m}) を独立したトークンとして抽出
+  const tokens = input.match(/\\.|\[[^\]]+\]|\{[0-9,]+\}|[+*?]|./g) || [];
   const result: string[] = [];
-  let inCharClass = false;
-  const whitespacePattern = '(?:\\s|\\r?\\n)*';
-  let lastWasWhitespacePattern = false; // 直前に whitespacePattern を挿入したか
-  let pendingLiteralWhitespace = false;  // 入力中に実際の空白文字が見つかったか
+  const spacer = '[\\s\\r\\n]*';
 
   for (let i = 0; i < tokens.length; i++) {
     const current = tokens[i];
     const next = tokens[i + 1];
 
-    // 文字クラスの開始/終了管理
-    if (current === '[' && !inCharClass) inCharClass = true;
-    if (current === ']' && inCharClass) inCharClass = false;
-
-    // ① 実入力の空白（半角スペース/タブなど）を検出したら
-    //    -> すぐ出力せず pendingLiteralWhitespace フラグを立てて次の非空白トークン時にまとめて処理する
-    if (/^[ \t]+$/.test(current)) {
-      pendingLiteralWhitespace = true;
-      continue; // 空白トークンはそのまま出力しない
-    }
-
-    // ② 文字クラス内はそのまま current を push（かつ空白フラグクリア）
-    if (inCharClass) {
-      // 文字クラス内部では pendingLiteralWhitespace があっても挿入しない仕様
-      result.push(current);
-      lastWasWhitespacePattern = false;
-      pendingLiteralWhitespace = false;
-      continue;
-    }
-
-    // ③ pendingLiteralWhitespace が立っている場合はここでまとめて whitespacePattern を入れる
-    if (pendingLiteralWhitespace) {
-      if (!lastWasWhitespacePattern) {
-        result.push(whitespacePattern);
-        lastWasWhitespacePattern = true;
-      }
-      pendingLiteralWhitespace = false;
-    }
-
-    // ④ current（非空白トークン）を出力
     result.push(current);
-    lastWasWhitespacePattern = false; // 現在はトークンを出力したのでパターンフラグはリセット
 
-    // ⑤ next が存在し、かつ挿入してよい条件なら whitespacePattern を入れる
-    //    - next が非空白で、かつ current/next が正規表現メタでない
-    if (
-      next &&
-      !/^[ \t]+$/.test(next) &&          // next が実入力の空白でない
-      !isRegexMeta(current) &&
-      !isRegexMeta(next) &&
-      !inCharClass
-    ) {
-      if (!lastWasWhitespacePattern) {
-        result.push(whitespacePattern);
-        lastWasWhitespacePattern = true;
-      }
+    if (next) {
+      // --- 挿入をスキップする条件 ---
+      
+      // 1. 次が量指定子 (+, *, ?, { ) なら、その前には spacer を入れない
+      if (/^[+*?{]/.test(next)) continue;
+
+      // 2. 現在のトークンが特定のメタ文字 ( ^, | など) の場合、
+      //    文脈によっては後ろに入れないほうが良いが、
+      //    Dreamweaver風なら基本入れてもOK。
+
+      // --- それ以外は spacer を挿入 ---
+      result.push(spacer);
     }
-    // ※ next が実入力空白なら、pendingLiteralWhitespace が次ループで true になるので、
-    //    その時に whitespacePattern を入れる（重複防止される）
   }
 
-  return result.join('');
+  // 最後に、連続してしまった spacer を 1つに掃除
+  return result.join('').replace(/(\[\\s\\r\\n\]\*)+/g, '[\\s\\r\\n]*');
 }
 
 function isRegexMeta(token: string): boolean {
