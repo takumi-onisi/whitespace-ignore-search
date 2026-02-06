@@ -1,39 +1,51 @@
 import * as vscode from 'vscode';
-import { getWebviewContent } from './webview';
+import * as path from 'path';
+import * as fs from 'fs';
 
 export function activate(context: vscode.ExtensionContext) {
-  let panel: vscode.WebviewPanel | undefined = undefined;
+    context.subscriptions.push(
+        vscode.commands.registerCommand('extension.showIgnoreWhitespacePanel', () => {
+            const panel = vscode.window.createWebviewPanel(
+                'ignoreWhitespace',
+                '空白無視検索パターン作成',
+                vscode.ViewColumn.Two,
+                { 
+                    enableScripts: true,
+                    // webviewフォルダからのリソース読み込みを許可
+                    localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'src', 'webview'))]
+                }
+            );
 
-  const disposable = vscode.commands.registerCommand('extension.showIgnoreWhitespacePanel', () => {
-    if (panel) {
-      panel.reveal(vscode.ViewColumn.Two);
-    } else {
-      panel = vscode.window.createWebviewPanel(
-        'ignoreWhitespace',
-        '空白無視検索パターン作成',
-        vscode.ViewColumn.Two,
-        { enableScripts: true }
-      );
+            panel.webview.html = getHtmlContent(context, panel.webview);
 
-      panel.webview.html = getWebviewContent();
+            panel.webview.onDidReceiveMessage(message => {
+                if (message.command === 'search') {
+                    vscode.commands.executeCommand('workbench.action.findInFiles', {
+                        query: message.pattern,
+                        isRegex: true,
+                        triggerSearch: true
+                    });
+                }
+            });
+        })
+    );
+}
 
-      panel.webview.onDidReceiveMessage(async (message) => {
-        if (message.command === 'search') {
-          // VS Code の検索パネルを呼び出す
-          await vscode.commands.executeCommand('workbench.action.findInFiles', {
-            query: message.pattern,
-            triggerSearch: true,
-            isRegex: true,
-            isCaseSensitive: false,
-          });
-        }
-      }, undefined, context.subscriptions);
+function getHtmlContent(context: vscode.ExtensionContext, webview: vscode.Webview): string {
+    const webviewPath = path.join(context.extensionPath, 'src', 'webview');
+    
+    // 各ファイルのURIをWebView用に変換
+    const scriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(webviewPath, 'script.js')));
+    const styleUri = webview.asWebviewUri(vscode.Uri.file(path.join(webviewPath, 'style.css')));
+    const htmlPath = path.join(webviewPath, 'searchPanel.html');
 
-      panel.onDidDispose(() => { panel = undefined; }, null, context.subscriptions);
-    }
-  });
+    let html = fs.readFileSync(htmlPath, 'utf8');
+    
+    // HTML内のプレースホルダーを実際のURIに置換
+    html = html.replace('{{styleUri}}', styleUri.toString());
+    html = html.replace('{{scriptUri}}', scriptUri.toString());
 
-  context.subscriptions.push(disposable);
+    return html;
 }
 
 export function deactivate() {}
