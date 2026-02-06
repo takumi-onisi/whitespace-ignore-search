@@ -14,7 +14,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.ignoreWhitespaceSearch",
+        "command": "extension.showIgnoreWhitespacePanel",
         "title": "空白無視＋正規表現検索"
       }
     ]
