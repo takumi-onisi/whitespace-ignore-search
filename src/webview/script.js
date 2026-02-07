@@ -14,30 +14,12 @@ const spacer = "[\\s\\r\\n]*";
  * - null: 片方のみ入力などの不正
  */
 function createSplitRegex(startDelimiter, endDelimiter) {
-  // 入力値の整理
-  const trimmedStart = startDelimiter.trim();
-  const trimmedEnd = endDelimiter.trim();
-
-  const isStartEmpty = trimmedStart === "";
-  const isEndEmpty = trimmedEnd === "";
-  // 片方のみ入力されている場合（エラー）
-  if (isStartEmpty !== isEndEmpty) {
-    return null;
-  }
-
-  // 開始終了が両方とも空白の場合
-  if (isStartEmpty && isEndEmpty) {
-    // 何にもマッチしない正規表現（正確には、決して現れないパターン）を返す
-    // これにより、input.split(reg) を実行したときに「分割されず、全体が1つ目の要素」として返ってくる
-    return /$^/g; // 保護区域なし
-  }
-
   // メタ文字をエスケープする関数
   const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   try {
-    const escapedStart = escape(trimmedStart);
-    const escapedEnd = escape(trimmedEnd);
+    const escapedStart = escape(startDelimiter);
+    const escapedEnd = escape(endDelimiter);
 
     // 正規表現の生成（非欲張りのマッチング .*? ）
     // ( ) で囲むことで、split した際の結果に区切り文字自体も含まれるようになります
@@ -53,33 +35,61 @@ function createSplitRegex(startDelimiter, endDelimiter) {
 function generatePattern(raw) {
   const startDelimiter = document.getElementById("startDelimiter").value;
   const endDelimiter = document.getElementById("endDelimiter").value;
-  // ユーザーが指定した開始文字(start)と終了文字(end)から分割用パターンを作る
-  const splitRegex = createSplitRegex(startDelimiter, endDelimiter);
 
-  if (splitRegex === null) {
-    // 片方入力エラーのトーストを表示して終了
+  // 入力値の整理
+  const trimmedStart = startDelimiter.trim();
+  const trimmedEnd = endDelimiter.trim();
+
+  const isStartEmpty = trimmedStart === "";
+  const isEndEmpty = trimmedEnd === "";
+  // 片方のみ入力されている場合（エラー）
+  if (isStartEmpty !== isEndEmpty) {
     vscode.postMessage({
       command: "showError",
       message: "片側のみのデリミタの設定はできません。",
     });
-    return;
+    return null;
   }
 
+  // 開始終了が両方とも空白の場合
+  if (isStartEmpty && isEndEmpty) {
+    // 何にもマッチしない正規表現（正確には、決して現れないパターン）を返す
+    // これにより、input.split(reg) を実行したときに「分割されず、全体が1つ目の要素」として返ってくる
+    return insertSpacer(raw, spacer);
+  }
+
+  // ユーザーが指定した開始文字(start)と終了文字(end)から分割用パターンを作る
+  const splitRegex = createSplitRegex(trimmedStart, trimmedEnd);
+
+  if (splitRegex === null) {
+    // 分割パターン作成失敗
+    return null;
+  }
+
+  // 分割の前にエスケープされたデリミタの処理が必要
+
+  // デリミタの位置で分割
   const parts = raw.split(splitRegex);
+
   return parts
     .map((part) => {
       if (part.startsWith(startDelimiter) && part.endsWith(endDelimiter)) {
+        // デリミタで囲まれた区間
         return part.slice(1, -1);
       } else {
-        return part
-          .replace(/[.*+?^$\\{}()|[\\]]/g, "\\$&")
-          .split("")
-          .filter((char) => !/\s/.test(char))
-          .join(spacer);
+        return insertSpacer(part,spacer);
       }
     })
     .join(spacer)
     .replace(/(\[\\s\\r\\n\]\*)+/g, spacer);
+}
+
+function insertSpacer(text, spacer) {
+  return text
+    .replace(/[.*+?^$\\{}()|[\\]]/g, "\\$&")
+    .split("")
+    .filter((char) => !/\s/.test(char))
+    .join(spacer);
 }
 
 input.addEventListener("input", () => {
@@ -87,6 +97,10 @@ input.addEventListener("input", () => {
 });
 
 searchBtn.addEventListener("click", () => {
+  vscode.postMessage({
+      command: "showError",
+      message: "サーチ",
+    });
   vscode.postMessage({
     command: "search",
     pattern: generatePattern(input.value),
