@@ -59,7 +59,7 @@ function getHtmlContent(
 
   // 各ファイルのURIをWebView用に変換
   const scriptUri = webview.asWebviewUri(
-    vscode.Uri.file(path.join(webviewPath, "script.js")),
+    vscode.Uri.joinPath(context.extensionUri, "dist", "webview-main.js")
   );
   const styleUri = webview.asWebviewUri(
     vscode.Uri.file(path.join(webviewPath, "style.css")),
