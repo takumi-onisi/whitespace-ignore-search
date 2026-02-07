@@ -75,7 +75,7 @@ function generatePattern(raw) {
     .map((part) => {
       if (part.startsWith(startDelimiter) && part.endsWith(endDelimiter)) {
         // デリミタで囲まれた区間
-        return part.slice(1, -1);
+        return part.slice(startDelimiter.length, -endDelimiter.length);
       } else {
         return insertSpacer(part,spacer);
       }
