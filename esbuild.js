@@ -24,30 +24,49 @@ const esbuildProblemMatcherPlugin = {
 };
 
 async function main() {
-	const ctx = await esbuild.context({
-		entryPoints: [
-			'src/extension.ts'
-		],
-		bundle: true,
-		format: 'cjs',
-		minify: production,
-		sourcemap: !production,
-		sourcesContent: false,
-		platform: 'node',
-		outfile: 'dist/extension.js',
-		external: ['vscode'],
-		logLevel: 'silent',
-		plugins: [
-			/* add to the end of plugins array */
-			esbuildProblemMatcherPlugin,
-		],
-	});
-	if (watch) {
-		await ctx.watch();
-	} else {
-		await ctx.rebuild();
-		await ctx.dispose();
-	}
+  // 1. Extension 本体用 (Node.js)
+  const extensionCtx = await esbuild.context({
+    entryPoints: ['src/extension.ts'],
+    bundle: true,
+    format: 'cjs',
+    minify: production,
+    sourcemap: !production,
+    sourcesContent: false,
+    platform: 'node',
+    outfile: 'dist/extension.js',
+    external: ['vscode'],
+    logLevel: 'silent',
+    plugins: [esbuildProblemMatcherPlugin],
+  });
+
+  // 2. Webview 側スクリプト用 (Browser)
+  const webviewCtx = await esbuild.context({
+    entryPoints: ['src/webview/main.ts'],
+    bundle: true,
+    format: 'iife', // ブラウザでそのまま実行可能な形式
+    minify: production,
+    sourcemap: !production,
+    platform: 'browser', // ブラウザ向けに設定
+    outfile: 'dist/webview-main.js', // 出力ファイル名を分ける
+    logLevel: 'silent',
+    plugins: [esbuildProblemMatcherPlugin],
+  });
+
+  if (watch) {
+    // 両方の監視を開始
+    await Promise.all([
+      extensionCtx.watch(),
+      webviewCtx.watch()
+    ]);
+  } else {
+    // 両方を一括ビルド
+    await Promise.all([
+      extensionCtx.rebuild(),
+      webviewCtx.rebuild()
+    ]);
+    await extensionCtx.dispose();
+    await webviewCtx.dispose();
+  }
 }
 
 main().catch(e => {
