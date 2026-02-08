@@ -1,5 +1,3 @@
-console.log("main.js");
-
 import { RegexHelper } from "../utils/regexHelper";
 // Webview APIの宣言
 declare function acquireVsCodeApi(): {
