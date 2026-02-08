@@ -46,7 +46,7 @@ input.addEventListener("input", () => {
 
 searchBtn.addEventListener("click", () => {
   vscode.postMessage({
-    command: "showError",
-    message: "サーチ",
+    command: "search",
+    pattern: generatePattern(input.value),
   });
 });
