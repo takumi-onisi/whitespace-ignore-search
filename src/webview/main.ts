@@ -8,8 +8,6 @@ const input = document.getElementById("input") as HTMLTextAreaElement;
 const preview = document.getElementById("preview") as HTMLElement;
 const searchBtn = document.getElementById("searchBtn") as HTMLButtonElement;
 
-const spacer = "[\\s\\r\\n]*";
-
 function generatePattern(raw : string) {
   const startInput = document.getElementById("startDelimiter") as HTMLInputElement;
   const endInput = document.getElementById("endDelimiter") as HTMLInputElement;
@@ -34,11 +32,11 @@ function generatePattern(raw : string) {
   // 開始終了が両方とも空白の場合
   if (isStartEmpty && isEndEmpty) {
     // 文字列すべてにスペーサーを挿入して返す
-    return RegexHelper.insertSpacer(raw, spacer);
+    return RegexHelper.insertSpacer(raw);
   }
   
   // 正規表現許容区間がある場合の検索パターンを生成して返す
-  return RegexHelper.generateFinalPattern(raw, trimmedStart, trimmedEnd, spacer);
+  return RegexHelper.generateFinalPattern(raw, trimmedStart, trimmedEnd);
 }
 
 input.addEventListener("input", () => {

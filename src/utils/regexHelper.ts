@@ -1,4 +1,6 @@
 export class RegexHelper {
+  // 空白として捕捉する文字をスペーサーとして定義
+  private static readonly DEFAULT_SPACER = "[\\s\\r\\n]*";
   // JSの正規表現メタ文字すべて
   private static readonly ALL_META_CHARS = /[.*+?^${}()|[\]\\]/g;
 
@@ -31,7 +33,8 @@ export class RegexHelper {
   /**
    * 文字の間に空白許容パターンを挿入する
    */
-  public static insertSpacer(text: string, spacer: string): string {
+  public static insertSpacer(text: string): string {
+    const spacer = this.DEFAULT_SPACER;
     // 全自動でエスケープしてからスペーサーを挟む
     return this.escapeAllMetaChars(text)
       .split("")
@@ -56,7 +59,6 @@ export class RegexHelper {
     raw: string,
     start: string,
     end: string,
-    spacer: string,
   ): string {
     // エスケープ対象のデリミタ文字の管理を担当
     const esc = this.getEscapeManager(start, end);
@@ -81,11 +83,12 @@ export class RegexHelper {
         return esc.reveal(inner);
       } else {
         // スペーサー挿入対象区間：復元してからスペーサー挿入
-        return this.insertSpacer(esc.reveal(part), spacer);
+        return this.insertSpacer(esc.reveal(part));
       }
     });
 
     // 結合して余計なスペーサーを掃除
+    const spacer = this.DEFAULT_SPACER;
     return processedParts
             .join(spacer)
             .replace(/(\[\\s\\r\\n\]\*)+/g, spacer);
