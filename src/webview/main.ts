@@ -43,10 +43,6 @@ function generatePattern(raw : string) {
   // ユーザーが指定した開始文字(start)と終了文字(end)から分割用パターンを作る
   const splitRegex = RegexHelper.createSplitRegex(trimmedStart, trimmedEnd);
 
-  if (splitRegex === null) {
-    // 分割パターン作成失敗
-    return null;
-  }
 
   // 分割の前にエスケープされたデリミタの処理が必要
 
