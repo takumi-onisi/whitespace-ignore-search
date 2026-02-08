@@ -46,16 +46,20 @@ export function activate(context: vscode.ExtensionContext) {
               break;
 
             // 保存
-            case "saveConfig":
-              context.globalState.update(
+            case "saveDelimiters":
+              await context.globalState.update(
                 "startDelimiter",
                 message.config.startDelimiter,
               );
-              context.globalState.update(
+              await context.globalState.update(
                 "endDelimiter",
                 message.config.endDelimiter,
               );
-              return;
+              break;
+
+            case "saveSpacer":
+              await context.globalState.update("spacerPattern", message.spacer);
+              break;
           }
         });
       },
@@ -80,9 +84,18 @@ function getHtmlContent(
 
   const config = RegexHelper.DEFAULT_CONFIG;
   // 保存された値を取得（空文字も有効、未設定ならデフォルト）
-  const startDelim = context.globalState.get<string>("startDelimiter", config.startDelimiter);
-  const endDelim = context.globalState.get<string>("endDelimiter", config.endDelimiter);
-  const spacer = context.globalState.get<string>('spacerPattern', config.spacerPattern);
+  const startDelim = context.globalState.get<string>(
+    "startDelimiter",
+    config.startDelimiter,
+  );
+  const endDelim = context.globalState.get<string>(
+    "endDelimiter",
+    config.endDelimiter,
+  );
+  const spacer = context.globalState.get<string>(
+    "spacerPattern",
+    config.spacerPattern,
+  );
 
   // エスケープ処理
   const safeStart = escapeHtml(startDelim);
@@ -107,7 +120,7 @@ function getHtmlContent(
   html = html.replace(/{{startDelim}}/g, safeStart);
   html = html.replace(/{{endDelim}}/g, safeEnd);
   html = html.replace(/{{spacerPattern}}/g, escapeHtml(spacer));
-  html = html.replace("{{textareaPlaceholder}}",placeholderText);
+  html = html.replace("{{textareaPlaceholder}}", placeholderText);
 
   return html;
 }

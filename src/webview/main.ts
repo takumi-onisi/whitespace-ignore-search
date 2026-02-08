@@ -49,7 +49,7 @@ function saveDelimiters() {
     const end = (document.getElementById("endDelimiter") as HTMLInputElement).value;
     
     vscode.postMessage({
-        command: 'saveConfig',
+        command: 'saveDelimiters',
         config: { startDelimiter: start, endDelimiter: end }
     });
 }
