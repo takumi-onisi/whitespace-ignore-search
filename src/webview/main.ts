@@ -12,34 +12,6 @@ const searchBtn = document.getElementById("searchBtn") as HTMLButtonElement;
 
 const spacer = "[\\s\\r\\n]*";
 
-
-/**
- * デリミタの入力値をチェックし、分割用の正規表現を生成する
- * @param {string} start - 開始デリミタ
- * @param {string} end - 終了デリミタ
- * @returns {RegExp|null}
- * - RegExp: 分割用パターン
- * - null: 片方のみ入力などの不正
- */
-// function createSplitRegex(startDelimiter : string, endDelimiter: string) {
-//   // メタ文字をエスケープする関数
-//   const escape = (s : string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-//   try {
-//     const escapedStart = escape(startDelimiter);
-//     const escapedEnd = escape(endDelimiter);
-
-//     // 正規表現の生成（非欲張りのマッチング .*? ）
-//     // ( ) で囲むことで、split した際の結果に区切り文字自体も含まれるようになります
-//     return new RegExp(`(${escapedStart}.*?${escapedEnd})`, "g");
-//   } catch (err) {
-//     vscode.postMessage({
-//       command: "showError",
-//       message: "不正なデリミタが指定されています。",
-//     });
-//   }
-// }
-
 function generatePattern(raw : string) {
   const startInput = document.getElementById("startDelimiter") as HTMLInputElement;
   const endInput = document.getElementById("endDelimiter") as HTMLInputElement;
@@ -69,10 +41,7 @@ function generatePattern(raw : string) {
   }
 
   // ユーザーが指定した開始文字(start)と終了文字(end)から分割用パターンを作る
-  // 正規表現の作成（RegexHelperに移動させるのが理想的）
-  const escapedStart = RegexHelper.escapeAllMetaChars(trimmedStart);
-  const escapedEnd = RegexHelper.escapeAllMetaChars(trimmedEnd);
-  const splitRegex = new RegExp(`(${escapedStart}.*?${escapedEnd})`, "g");
+  const splitRegex = RegexHelper.createSplitRegex(trimmedStart, trimmedEnd);
 
   if (splitRegex === null) {
     // 分割パターン作成失敗

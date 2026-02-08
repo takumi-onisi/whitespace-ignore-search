@@ -19,4 +19,14 @@ export class RegexHelper {
       .filter((char) => !/\s/.test(char))
       .join(spacer);
   }
+
+  /**
+   * 開始・終了デリミタから、分割用の正規表現を生成する
+   */
+  public static createSplitRegex(start: string, end: string): RegExp {
+    const escapedStart = this.escapeAllMetaChars(start);
+    const escapedEnd = this.escapeAllMetaChars(end);
+    // (開始.*?終了) の形を作り、キャプチャグループ () で囲むことで split 時にも値を残す
+    return new RegExp(`(${escapedStart}.*?${escapedEnd})`, "g");
+  }
 }
