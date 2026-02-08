@@ -8,6 +8,7 @@ const input = document.getElementById("input") as HTMLTextAreaElement;
 const preview = document.getElementById("preview") as HTMLElement;
 const searchBtn = document.getElementById("searchBtn") as HTMLButtonElement;
 
+// VS Code の検索欄に送る正規表現を生成
 function generatePattern(raw : string) {
   const startInput = document.getElementById("startDelimiter") as HTMLInputElement;
   const endInput = document.getElementById("endDelimiter") as HTMLInputElement;
@@ -47,9 +48,5 @@ searchBtn.addEventListener("click", () => {
   vscode.postMessage({
     command: "showError",
     message: "サーチ",
-  });
-  vscode.postMessage({
-    command: "search",
-    pattern: generatePattern(input.value),
   });
 });
