@@ -58,42 +58,36 @@ export class RegexHelper {
     end: string,
     spacer: string,
   ): string {
-    // デリミタの2連（エスケープ）を一時的なユニーク文字列に置換
-    const PLACEHOLDER_START = `__ST_${Math.random()}__`;
-    const PLACEHOLDER_END = `__ED_${Math.random()}__`;
+    // エスケープ対象のデリミタ文字の管理を担当
+    const esc = this.getEscapeManager(start, end);
 
-    // 2連を置換 (@@ -> PLACEHOLDER)
-    let processed = raw
-      .split(start + start)
-      .join(PLACEHOLDER_START)
-      .split(end + end)
-      .join(PLACEHOLDER_END);
+    // エスケープされたデリミタ文字を一時的にマスクする
+    const maskedText = esc.hide(raw);
 
     // 本物のデリミタで分割して、各パートを処理
-    const splitRegex = this.createSplitRegex(start, end);
-    const parts = processed.split(splitRegex);
+    const splitRegex = new RegExp(
+      `(${this.escapeAllMetaChars(start)}.*?${this.escapeAllMetaChars(end)})`,
+      "g",
+    );
+    const parts = maskedText.split(splitRegex);
 
-    const resultParts = parts.map((part) => {
-      if (part.startsWith(start) && part.endsWith(end)) {
-        // 保護区内：デリミタを除去し、プレースホルダーを元の「単一デリミタ」に戻す
+    const processedParts = parts.map((part) => {
+      // デリミタで囲まれた区間かどうかをチェック
+      const isProtected = part.startsWith(start) && part.endsWith(end);
+
+      if (isProtected) {
+        // デリミタで囲まれた区間：デリミタを剥ぎ取ってから復元
         const inner = part.slice(start.length, -end.length);
-        return inner
-          .split(PLACEHOLDER_START)
-          .join(start)
-          .split(PLACEHOLDER_END)
-          .join(end);
+        return esc.reveal(inner);
       } else {
-        // 非保護区：プレースホルダーを「単一デリミタ」に戻してから、空白無視化
-        const originalText = part
-          .split(PLACEHOLDER_START)
-          .join(start)
-          .split(PLACEHOLDER_END)
-          .join(end);
-        return this.insertSpacer(originalText, spacer);
+        // スペーサー挿入対象区間：復元してからスペーサー挿入
+        return this.insertSpacer(esc.reveal(part), spacer);
       }
     });
 
     // 結合して余計なスペーサーを掃除
-    return resultParts.join(spacer).replace(/(\[\\s\\r\\n\]\*)+/g, spacer);
+    return processedParts
+            .join(spacer)
+            .replace(/(\[\\s\\r\\n\]\*)+/g, spacer);
   }
 }
