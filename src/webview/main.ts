@@ -14,11 +14,14 @@ function generatePattern(raw : string) {
   const endInput = document.getElementById("endDelimiter") as HTMLInputElement;
   const startDelimiter = startInput.value;
   const endDelimiter = endInput.value;
+  const spacerInput = document.getElementById("spacerPattern") as HTMLInputElement;
 
   // 入力値の整理
   const trimmedStart = startDelimiter.trim();
   const trimmedEnd = endDelimiter.trim();
+  const currentSpacer = spacerInput.value || ""; // 空なら空文字
 
+  // 入力値のチェック
   const isStartEmpty = trimmedStart === "";
   const isEndEmpty = trimmedEnd === "";
   // 片方のみ入力されている場合（エラー）
@@ -33,11 +36,11 @@ function generatePattern(raw : string) {
   // 開始終了が両方とも空白の場合
   if (isStartEmpty && isEndEmpty) {
     // 文字列すべてにスペーサーを挿入して返す
-    return RegexHelper.insertSpacer(raw);
+    return RegexHelper.insertSpacer(raw, currentSpacer);
   }
   
   // 正規表現許容区間がある場合の検索パターンを生成して返す
-  return RegexHelper.generateFinalPattern(raw, trimmedStart, trimmedEnd);
+  return RegexHelper.generateFinalPattern(raw, trimmedStart, trimmedEnd, currentSpacer);
 }
 
 // ユーザーが設定したデリミタを保存する

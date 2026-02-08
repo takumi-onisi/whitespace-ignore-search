@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
+import { RegexHelper } from "./utils/regexHelper";
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -76,13 +77,17 @@ function getHtmlContent(
     vscode.Uri.file(path.join(webviewPath, "style.css")),
   );
   const htmlPath = path.join(webviewPath, "searchPanel.html");
+
+  const config = RegexHelper.DEFAULT_CONFIG;
   // 保存された値を取得（空文字も有効、未設定ならデフォルト）
-  const startDelim = context.globalState.get<string>("startDelimiter", "@");
-  const endDelim = context.globalState.get<string>("endDelimiter", "@");
+  const startDelim = context.globalState.get<string>("startDelimiter", config.startDelimiter);
+  const endDelim = context.globalState.get<string>("endDelimiter", config.endDelimiter);
+  const spacer = context.globalState.get<string>('spacerPattern', config.spacerPattern);
 
   // エスケープ処理
   const safeStart = escapeHtml(startDelim);
   const safeEnd = escapeHtml(endDelim);
+  const safeSpacer = escapeHtml(spacer);
 
   let placeholderText = "";
   if (startDelim === "" && endDelim === "") {
@@ -101,6 +106,7 @@ function getHtmlContent(
   html = html.replace("{{scriptUri}}", scriptUri.toString());
   html = html.replace(/{{startDelim}}/g, safeStart);
   html = html.replace(/{{endDelim}}/g, safeEnd);
+  html = html.replace(/{{spacerPattern}}/g, escapeHtml(spacer));
   html = html.replace("{{textareaPlaceholder}}",placeholderText);
 
   return html;
