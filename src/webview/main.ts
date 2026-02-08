@@ -54,6 +54,27 @@ function saveDelimiters() {
     });
 }
 
+// ユーザーが設定したスペーサーの保存
+function saveSpacer() {
+    const spacer = (document.getElementById("spacerPattern") as HTMLInputElement).value;
+    
+    vscode.postMessage({
+        command: 'saveSpacer',
+        spacer: spacer
+    });
+}
+
+// スペーサーの設定をデフォルト値に戻す
+function resetSpacer() {
+  const spacer = RegexHelper.DEFAULT_CONFIG.spacerPattern;
+  (document.getElementById("spacerPattern") as HTMLInputElement).value = spacer;
+
+  vscode.postMessage({
+        command: 'saveSpacer',
+        spacer: spacer
+    });
+}
+
 input.addEventListener("input", () => {
   preview.textContent = "生成結果: " + generatePattern(input.value);
 });
@@ -68,3 +89,6 @@ searchBtn.addEventListener("click", () => {
 // 入力欄からフォーカスが外れた時などに保存
 document.getElementById("startDelimiter")?.addEventListener("blur", saveDelimiters);
 document.getElementById("endDelimiter")?.addEventListener("blur", saveDelimiters);
+document.getElementById("spacerPattern")?.addEventListener("blur", saveSpacer);
+// 設定のリセット
+document.getElementById("resetSpacer")?.addEventListener("click", resetSpacer);
