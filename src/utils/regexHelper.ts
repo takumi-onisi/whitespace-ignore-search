@@ -10,6 +10,25 @@ export class RegexHelper {
   }
 
   /**
+   * デリミタのエスケープと復元処理をまとめる
+   */
+  private static getEscapeManager(start: string, end: string) {
+    const pStart = `__ST_${Math.random()}__`;
+    const pEnd = `__ED_${Math.random()}__`;
+    return {
+      // 2連デリミタの置換
+      hide: (t: string) =>
+        t
+          .split(start + start) // 2連デリミタ
+          .join(pStart)
+          .split(end + end) // 2連デリミタ
+          .join(pEnd),
+      // デリミタの復元
+      reveal: (t: string) => t.split(pStart).join(start).split(pEnd).join(end),
+    };
+  }
+
+  /**
    * 文字の間に空白許容パターンを挿入する
    */
   public static insertSpacer(text: string, spacer: string): string {
