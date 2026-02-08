@@ -65,7 +65,7 @@ function generatePattern(raw : string) {
   if (isStartEmpty && isEndEmpty) {
     // 何にもマッチしない正規表現（正確には、決して現れないパターン）を返す
     // これにより、input.split(reg) を実行したときに「分割されず、全体が1つ目の要素」として返ってくる
-    return insertSpacer(raw, spacer);
+    return RegexHelper.insertSpacer(raw, spacer);
   }
 
   // ユーザーが指定した開始文字(start)と終了文字(end)から分割用パターンを作る
@@ -90,19 +90,11 @@ function generatePattern(raw : string) {
         // デリミタで囲まれた区間
         return part.slice(trimmedStart.length, -trimmedEnd.length);
       } else {
-        return insertSpacer(part, spacer);
+        return RegexHelper.insertSpacer(part, spacer);
       }
     })
     .join(spacer)
     .replace(/(\[\\s\\r\\n\]\*)+/g, spacer);
-}
-
-function insertSpacer(text : string, spacer : string) {
-  return text
-    .replace(/[.*+?^$\\{}()|[\\]]/g, "\\$&")
-    .split("")
-    .filter((char) => !/\s/.test(char))
-    .join(spacer);
 }
 
 input.addEventListener("input", () => {
