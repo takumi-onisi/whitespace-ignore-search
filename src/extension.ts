@@ -43,6 +43,18 @@ export function activate(context: vscode.ExtensionContext) {
               // VSCode標準のトースト通知
               vscode.window.showErrorMessage(message.message);
               break;
+
+            // 保存
+            case "saveConfig":
+              context.globalState.update(
+                "startDelimiter",
+                message.config.startDelimiter,
+              );
+              context.globalState.update(
+                "endDelimiter",
+                message.config.endDelimiter,
+              );
+              return;
           }
         });
       },
@@ -64,14 +76,44 @@ function getHtmlContent(
     vscode.Uri.file(path.join(webviewPath, "style.css")),
   );
   const htmlPath = path.join(webviewPath, "searchPanel.html");
+  // 保存された値を取得（空文字も有効、未設定ならデフォルト）
+  const startDelim = context.globalState.get<string>("startDelimiter", "@");
+  const endDelim = context.globalState.get<string>("endDelimiter", "@");
+
+  // エスケープ処理
+  const safeStart = escapeHtml(startDelim);
+  const safeEnd = escapeHtml(endDelim);
+
+  let placeholderText = "";
+  if (startDelim === "" && endDelim === "") {
+    placeholderText =
+      "デリミタが未設定のため、正規表現のメタ文字はエスケープされ、入力された全文にスペーサーが挿入されます。";
+  } else {
+    placeholderText = `開始デリミタ:${safeStart}
+    閉じデリミタ:${safeEnd}
+    デリミタ間は保護区間として扱われます。
+    例: <div>${safeStart}保護区間 [^<>\s]+${safeEnd}</div> `;
+  }
 
   let html = fs.readFileSync(htmlPath, "utf8");
-
   // HTML内のプレースホルダーを実際のURIに置換
   html = html.replace("{{styleUri}}", styleUri.toString());
   html = html.replace("{{scriptUri}}", scriptUri.toString());
+  html = html.replace(/{{startDelim}}/g, safeStart);
+  html = html.replace(/{{endDelim}}/g, safeEnd);
+  html = html.replace("{{textareaPlaceholder}}",placeholderText);
 
   return html;
+}
+
+// ユーザー入力の値をhtmlに対して無害化する
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 export function deactivate() {}

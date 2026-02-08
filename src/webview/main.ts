@@ -40,6 +40,17 @@ function generatePattern(raw : string) {
   return RegexHelper.generateFinalPattern(raw, trimmedStart, trimmedEnd);
 }
 
+// ユーザーが設定したデリミタを保存する
+function saveDelimiters() {
+    const start = (document.getElementById("startDelimiter") as HTMLInputElement).value;
+    const end = (document.getElementById("endDelimiter") as HTMLInputElement).value;
+    
+    vscode.postMessage({
+        command: 'saveConfig',
+        config: { startDelimiter: start, endDelimiter: end }
+    });
+}
+
 input.addEventListener("input", () => {
   preview.textContent = "生成結果: " + generatePattern(input.value);
 });
@@ -50,3 +61,7 @@ searchBtn.addEventListener("click", () => {
     pattern: generatePattern(input.value),
   });
 });
+
+// 入力欄からフォーカスが外れた時などに保存
+document.getElementById("startDelimiter")?.addEventListener("blur", saveDelimiters);
+document.getElementById("endDelimiter")?.addEventListener("blur", saveDelimiters);

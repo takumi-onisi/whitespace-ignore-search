@@ -7,8 +7,8 @@
 <body>
     <h2>Whitespace Ignore Search</h2>
     <p class="info">入力文字列に空白/改行の有無を許容する正規表現を自動挿入することで、空白を無視した検索パターンを作成可能です。</p>
-    <p class="info"><input type="text" id="startDelimiter" value="@">と<input type="text" id="endDelimiter" value="@">で囲った部分は保護区域となり、正規表現の使用が可能です。</p>
-    <textarea id="input" class="editor" placeholder="例: const @[a-z]+@ = 10"></textarea>
+    <p class="info"><input type="text" id="startDelimiter" value="{{startDelim}}">と<input type="text" id="endDelimiter" value="{{endDelim}}">で囲った部分は保護区域となり、正規表現の使用が可能です。</p>
+    <textarea id="input" class="editor" placeholder="{{textareaPlaceholder}}"></textarea>
     <div id="preview" class="output-preview"></div>
     <button id="searchBtn" class="vscode">VS Code 検索パネルへ注入</button>
     <script src="{{scriptUri}}"></script>
