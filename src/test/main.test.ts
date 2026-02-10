@@ -34,6 +34,21 @@ describe("Webview UI Integration", () => {
     expect(previewEl.textContent).toContain("a[\\s\\r\\n]*b");
   });
 
+  it("デリミタを設定したとき、正しい検索パターンがプレビューに表示されるか", () => {
+    const startDelimiterEl = document.getElementById("startDelimiter") as HTMLInputElement;
+    const endDelimiterEl = document.getElementById("endDelimiter") as HTMLInputElement;
+    const inputEl = document.getElementById("input") as HTMLTextAreaElement;
+    const previewEl = document.getElementById("preview") as HTMLElement;
+
+    startDelimiterEl.value = "@";
+    endDelimiterEl.value = "@";
+    inputEl.value = "a@bc@";
+    // 手動で input イベントを発生させてリスナーを叩く
+    inputEl.dispatchEvent(new Event("input"));
+
+    expect(previewEl.textContent).toContain("a[\\s\\r\\n]*bc");
+  });
+
   it("リセットボタンを押したとき、スペーサーがデフォルトに戻るか", () => {
     const spacerEl = document.getElementById(
       "spacerPattern",
