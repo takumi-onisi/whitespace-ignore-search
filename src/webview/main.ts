@@ -116,6 +116,17 @@ export function init() {
     });
   }
 
+  // 生成したパターンをVSCodeの検索欄に送る
+  function handleSearchButtonClick() {
+    const pattern = generatePattern(input.value);
+
+    // メッセージを送信
+    vscode.postMessage({
+      command: "search",
+      pattern: pattern,
+    });
+  }
+
   // 入力があったらプレビューを更新する
   input.addEventListener("input", updatePreview);
   (
@@ -128,13 +139,8 @@ export function init() {
     document.getElementById("spacerPattern") as HTMLInputElement
   ).addEventListener("input", updatePreview);
 
-  // 生成したパターンをVSCodeの検索欄に送る
-  searchBtn.addEventListener("click", () => {
-    vscode.postMessage({
-      command: "search",
-      pattern: generatePattern(input.value),
-    });
-  });
+  // 検索ボタンを押したときのハンドラーを登録
+  searchBtn.addEventListener("click", handleSearchButtonClick);
 
   // 入力欄からフォーカスが外れた時などに保存
   document
