@@ -12,6 +12,31 @@ body {
   font-family: sans-serif;
   padding: 16px;
 }
+
+input[type="text"] {
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    padding: 2px 4px;
+    font-family: monospace;
+    box-sizing: border-box;
+    outline: none;
+}
+
+input[type="text"]:focus {
+    border: 1px solid var(--vscode-focusBorder);
+}
+
+/* デリミタ用：最低1文字分 */
+#startDelimiter, #endDelimiter {
+    min-width: 2ch; /* 1文字 + 余裕 */
+}
+
+/* スペーサー用：最低7文字分 */
+#spacerPattern {
+    min-width: 8ch; /* 7文字 + 余裕 */
+}
+
 .editor {
   width: 100%;
   min-height: 120px;

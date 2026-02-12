@@ -24,7 +24,9 @@ export function init() {
   // 起動時に一度だけ取得して固定する（キャッシュ）
   const el = {
     input: document.getElementById("input") as HTMLTextAreaElement,
-    startDelimiter: document.getElementById("startDelimiter") as HTMLInputElement,
+    startDelimiter: document.getElementById(
+      "startDelimiter",
+    ) as HTMLInputElement,
     endDelimiter: document.getElementById("endDelimiter") as HTMLInputElement,
     spacer: document.getElementById("spacerPattern") as HTMLInputElement,
     preview: document.getElementById("preview") as HTMLElement,
@@ -131,11 +133,24 @@ export function init() {
     });
   }
 
+  // 文字数(value.length)に応じて幅を変える
+  function adjustInputWidth(el: HTMLInputElement) {
+    // 完全にピッタリにするのは難しいため、size属性を更新するのが最も軽量
+    const minSize = el.id === "spacerPattern" ? 7 : 1;
+    el.size = Math.max(minSize, el.value.length || 1);
+  }
+
   // 入力があったらプレビューを更新する
   el.input.addEventListener("input", updatePreview);
   el.startDelimiter.addEventListener("input", updatePreview);
   el.endDelimiter.addEventListener("input", updatePreview);
   el.spacer.addEventListener("input", updatePreview);
+
+  // input要素の横幅を入力文字に合わせる
+  [el.startDelimiter, el.endDelimiter, el.spacer].forEach((input) => {
+    adjustInputWidth(input); // 初回の横幅調整
+    input.addEventListener("input", () => adjustInputWidth(input));
+  });
 
   // 検索ボタンを押したときのハンドラーを登録
   el.searchBtn.addEventListener("click", handleSearchButtonClick);
