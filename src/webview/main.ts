@@ -98,9 +98,7 @@ export function init() {
 
   // ユーザーが設定したスペーサーの保存
   function saveSpacer() {
-    const spacer = (
-      document.getElementById("spacerPattern") as HTMLInputElement
-    ).value;
+    const { spacer } = getValues();
 
     vscode.postMessage({
       command: "saveSpacer",
@@ -111,9 +109,10 @@ export function init() {
   // スペーサーの設定をデフォルト値に戻す
   function resetSpacer() {
     const spacer = RegexHelper.DEFAULT_CONFIG.spacerPattern;
-    (document.getElementById("spacerPattern") as HTMLInputElement).value =
-      spacer;
+    // viewの更新
+    el.spacer.value = spacer;
     updatePreview();
+    // 設定の保存
     vscode.postMessage({
       command: "saveSpacer",
       spacer: spacer,
