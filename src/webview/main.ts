@@ -24,8 +24,8 @@ export function init() {
   // 起動時に一度だけ取得して固定する（キャッシュ）
   const el = {
     input: document.getElementById("input") as HTMLTextAreaElement,
-    startDelim: document.getElementById("startDelimiter") as HTMLInputElement,
-    endDelim: document.getElementById("endDelimiter") as HTMLInputElement,
+    startDelimiter: document.getElementById("startDelimiter") as HTMLInputElement,
+    endDelimiter: document.getElementById("endDelimiter") as HTMLInputElement,
     spacer: document.getElementById("spacerPattern") as HTMLInputElement,
     preview: document.getElementById("preview") as HTMLElement,
     searchBtn: document.getElementById("searchBtn") as HTMLButtonElement,
@@ -36,8 +36,8 @@ export function init() {
   function getValues() {
     return {
       input: el.input.value,
-      startDelimiter: el.startDelim.value,
-      endDelimiter: el.endDelim.value,
+      startDelimiter: el.startDelimiter.value,
+      endDelimiter: el.endDelimiter.value,
       spacer: el.spacer.value,
     };
   }
@@ -133,31 +133,17 @@ export function init() {
 
   // 入力があったらプレビューを更新する
   el.input.addEventListener("input", updatePreview);
-  (
-    document.getElementById("startDelimiter") as HTMLInputElement
-  ).addEventListener("input", updatePreview);
-  (
-    document.getElementById("endDelimiter") as HTMLInputElement
-  ).addEventListener("input", updatePreview);
-  (
-    document.getElementById("spacerPattern") as HTMLInputElement
-  ).addEventListener("input", updatePreview);
+  el.startDelimiter.addEventListener("input", updatePreview);
+  el.endDelimiter.addEventListener("input", updatePreview);
+  el.spacer.addEventListener("input", updatePreview);
 
   // 検索ボタンを押したときのハンドラーを登録
   el.searchBtn.addEventListener("click", handleSearchButtonClick);
 
   // 入力欄からフォーカスが外れた時などに保存
-  document
-    .getElementById("startDelimiter")
-    ?.addEventListener("blur", saveDelimiters);
-  document
-    .getElementById("endDelimiter")
-    ?.addEventListener("blur", saveDelimiters);
-  document
-    .getElementById("spacerPattern")
-    ?.addEventListener("blur", saveSpacer);
+  el.startDelimiter.addEventListener("blur", saveDelimiters);
+  el.endDelimiter.addEventListener("blur", saveDelimiters);
+  el.spacer.addEventListener("blur", saveSpacer);
   // 設定のリセット
-  document
-    .getElementById("resetSpacer")
-    ?.addEventListener("click", resetSpacer);
+  el.resetBtn.addEventListener("click", resetSpacer);
 }
