@@ -107,10 +107,12 @@ function getHtmlContent(
     placeholderText =
       "デリミタが未設定のため、正規表現のメタ文字はエスケープされ、入力された全文にスペーサーが挿入されます。";
   } else {
-    placeholderText = `開始デリミタ:${safeStart}
+    placeholderText = `
+    開始デリミタ:${safeStart}
     閉じデリミタ:${safeEnd}
     デリミタ間は保護区間として扱われます。
-    例: <div>${safeStart}保護区間 [^<>\s]+${safeEnd}</div> `;
+    保護区間では入力文字がそのまま検索欄に挿入されます。
+    例: ${safeStart}[^<>\s]+${safeEnd} `;
   }
 
   let html = fs.readFileSync(htmlPath, "utf8");
