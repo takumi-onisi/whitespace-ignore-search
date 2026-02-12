@@ -88,15 +88,11 @@ export function init() {
 
   // ユーザーが設定したデリミタを保存する
   function saveDelimiters() {
-    const start = (
-      document.getElementById("startDelimiter") as HTMLInputElement
-    ).value;
-    const end = (document.getElementById("endDelimiter") as HTMLInputElement)
-      .value;
+    const { startDelimiter, endDelimiter } = getValues();
 
     vscode.postMessage({
       command: "saveDelimiters",
-      config: { startDelimiter: start, endDelimiter: end },
+      config: { startDelimiter: startDelimiter, endDelimiter: endDelimiter },
     });
   }
 
