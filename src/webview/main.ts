@@ -36,30 +36,20 @@ export function init() {
   function getValues() {
     return {
       input: el.input.value,
-      start: el.startDelim.value,
-      end: el.endDelim.value,
+      startDelimiter: el.startDelim.value,
+      endDelimiter: el.endDelim.value,
       spacer: el.spacer.value,
     };
   }
 
   // VS Code の検索欄に送る正規表現を生成
   function generatePattern(raw: string) {
-    const startInput = document.getElementById(
-      "startDelimiter",
-    ) as HTMLInputElement;
-    const endInput = document.getElementById(
-      "endDelimiter",
-    ) as HTMLInputElement;
-    const startDelimiter = startInput.value;
-    const endDelimiter = endInput.value;
-    const spacerInput = document.getElementById(
-      "spacerPattern",
-    ) as HTMLInputElement;
+    const { startDelimiter, endDelimiter, spacer } = getValues();
 
     // 入力値の整理
     const trimmedStart = startDelimiter.trim();
     const trimmedEnd = endDelimiter.trim();
-    const currentSpacer = spacerInput.value || ""; // 空なら空文字
+    const currentSpacer = spacer || ""; // 空なら空文字
 
     // 入力値のチェック
     const isStartEmpty = trimmedStart === "";
