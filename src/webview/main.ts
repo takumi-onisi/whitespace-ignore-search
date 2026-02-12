@@ -21,9 +21,26 @@ if (typeof window !== "undefined") {
 export function init() {
   const vscode = acquireVsCodeApi();
 
-  const input = document.getElementById("input") as HTMLTextAreaElement;
-  const preview = document.getElementById("preview") as HTMLElement;
-  const searchBtn = document.getElementById("searchBtn") as HTMLButtonElement;
+  // 起動時に一度だけ取得して固定する（キャッシュ）
+  const el = {
+    input: document.getElementById("input") as HTMLTextAreaElement,
+    startDelim: document.getElementById("startDelimiter") as HTMLInputElement,
+    endDelim: document.getElementById("endDelimiter") as HTMLInputElement,
+    spacer: document.getElementById("spacerPattern") as HTMLInputElement,
+    preview: document.getElementById("preview") as HTMLElement,
+    searchBtn: document.getElementById("searchBtn") as HTMLButtonElement,
+    resetBtn: document.getElementById("resetSpacer") as HTMLButtonElement,
+  };
+
+  // 値を取得したい時は、このオブジェクトから読み取る
+  function getValues() {
+    return {
+      input: el.input.value,
+      start: el.startDelim.value,
+      end: el.endDelim.value,
+      spacer: el.spacer.value,
+    };
+  }
 
   // VS Code の検索欄に送る正規表現を生成
   function generatePattern(raw: string) {
@@ -73,9 +90,10 @@ export function init() {
 
   // 生成したパターンのプレビューを更新
   function updatePreview() {
-    const pattern = generatePattern(input.value);
+    const { input } = getValues();
+    const pattern = generatePattern(input);
     // nullチェックも行い ユーザーがわかるように通知
-    preview.textContent = "生成結果: " + (pattern ?? "（エラーあり）");
+    el.preview.textContent = "生成結果: " + (pattern ?? "（エラーあり）");
   }
 
   // ユーザーが設定したデリミタを保存する
@@ -118,7 +136,8 @@ export function init() {
 
   // 生成したパターンをVSCodeの検索欄に送る
   function handleSearchButtonClick() {
-    const pattern = generatePattern(input.value);
+    const { input } = getValues();
+    const pattern = generatePattern(input);
 
     // メッセージを送信
     vscode.postMessage({
@@ -128,7 +147,7 @@ export function init() {
   }
 
   // 入力があったらプレビューを更新する
-  input.addEventListener("input", updatePreview);
+  el.input.addEventListener("input", updatePreview);
   (
     document.getElementById("startDelimiter") as HTMLInputElement
   ).addEventListener("input", updatePreview);
@@ -140,7 +159,7 @@ export function init() {
   ).addEventListener("input", updatePreview);
 
   // 検索ボタンを押したときのハンドラーを登録
-  searchBtn.addEventListener("click", handleSearchButtonClick);
+  el.searchBtn.addEventListener("click", handleSearchButtonClick);
 
   // 入力欄からフォーカスが外れた時などに保存
   document
