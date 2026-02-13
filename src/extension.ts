@@ -71,16 +71,19 @@ function getHtmlContent(
   context: vscode.ExtensionContext,
   webview: vscode.Webview,
 ): string {
-  const webviewPath = path.join(context.extensionPath, "src", "webview");
-
   // 各ファイルのURIをWebView用に変換
   const scriptUri = webview.asWebviewUri(
     vscode.Uri.joinPath(context.extensionUri, "dist", "webview-main.js"),
   );
   const styleUri = webview.asWebviewUri(
-    vscode.Uri.file(path.join(webviewPath, "style.css")),
+    vscode.Uri.joinPath(context.extensionUri, "src", "webview", "style.css"),
   );
-  const htmlPath = path.join(webviewPath, "searchPanel.html");
+  const htmlUri = vscode.Uri.joinPath(
+    context.extensionUri,
+    "src",
+    "webview",
+    "searchPanel.html",
+  );
 
   const config = RegexHelper.DEFAULT_CONFIG;
   // 保存された値を取得（空文字も有効、未設定ならデフォルト）
@@ -115,7 +118,7 @@ function getHtmlContent(
     例: ${safeStart}[^<>\s]+${safeEnd} `;
   }
 
-  let html = fs.readFileSync(htmlPath, "utf8");
+  let html = fs.readFileSync(htmlUri.fsPath, "utf8");
   // HTML内のプレースホルダーを実際のURIに置換
   html = html.replace("{{styleUri}}", styleUri.toString());
   html = html.replace("{{scriptUri}}", scriptUri.toString());
