@@ -1,8 +1,8 @@
 export class RegexHelper {
   // 空白として捕捉する文字をスペーサーとして定義
   public static readonly DEFAULT_CONFIG = {
-        startDelimiter: "@@",
-        endDelimiter: "@@",
+        startDelimiter: "@",
+        endDelimiter: "@",
         spacerPattern: "[\\s\\r\\n]*"
     };
   // JSの正規表現メタ文字すべて
