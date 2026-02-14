@@ -1,10 +1,10 @@
 export class RegexHelper {
   // 空白として捕捉する文字をスペーサーとして定義
   public static readonly DEFAULT_CONFIG = {
-        startDelimiter: "@",
-        endDelimiter: "@",
-        spacerPattern: "[\\s\\r\\n]*"
-    };
+    startDelimiter: "@",
+    endDelimiter: "@",
+    spacerPattern: "[\\s\\r\\n]*",
+  };
   // JSの正規表現メタ文字すべて
   private static readonly ALL_META_CHARS = /[.*+?^${}()|[\]\\]/g;
 
@@ -38,11 +38,15 @@ export class RegexHelper {
    * 文字の間に空白許容パターンを挿入する
    */
   public static insertSpacer(text: string, spacer: string): string {
-    // 全自動でエスケープしてからスペーサーを挟む
-    return this.escapeAllMetaChars(text)
-      .split("")
-      .filter((char) => !/\s/.test(char))
-      .join(spacer);
+    // 1. 空白を削除
+    const cleanedText = text.replace(/\s+/g, "");
+
+    // 2. 文字列を一文字ずつバラバラにする
+    // (サロゲートペアやエスケープ済み文字を考慮せず、純粋に1文字ずつ)
+    const chars = cleanedText.split("");
+
+    // 3. 各文字をエスケープした後に、スペーサーで結合する
+    return chars.map((char) => this.escapeAllMetaChars(char)).join(spacer);
   }
 
   /**
@@ -62,7 +66,7 @@ export class RegexHelper {
     raw: string,
     start: string,
     end: string,
-    spacer: string
+    spacer: string,
   ): string {
     // エスケープ対象のデリミタ文字の管理を担当
     const esc = this.getEscapeManager(start, end);
@@ -91,9 +95,12 @@ export class RegexHelper {
       }
     });
 
-    // 結合して余計なスペーサーを掃除
+    // 余分なスペーサーを掃除
     return processedParts
-            .join(spacer)
-            .replace(/(\[\\s\\r\\n\]\*)+/g, spacer);
+        .filter(p => p !== "") // 分割パーツが空文字の場合は除外
+        .join(spacer) // 各パーツ間にスペーサーを挿入
+        // スペーサーが連続してしまった場合（例：スペーサー + スペーサー）を掃除
+        // 文字列として置換することで、余計なエスケープバグを防ぐ
+        .split(spacer + spacer).join(spacer);
   }
 }
