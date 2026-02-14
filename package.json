@@ -11,6 +11,10 @@
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
+  "files": [
+    "dist",
+    "media" 
+  ],
   "contributes": {
     "commands": [
       {

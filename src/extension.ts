@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
             enableScripts: true,
             // 拡張機能で使用するリソース読み込みを許可
             localResourceRoots: [
-              vscode.Uri.joinPath(context.extensionUri, "src", "webview"),
+              vscode.Uri.joinPath(context.extensionUri, "media"),
               vscode.Uri.joinPath(context.extensionUri, "dist"),
             ],
           },
@@ -76,12 +76,11 @@ function getHtmlContent(
     vscode.Uri.joinPath(context.extensionUri, "dist", "webview-main.js"),
   );
   const styleUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(context.extensionUri, "src", "webview", "style.css"),
+    vscode.Uri.joinPath(context.extensionUri, "media", "style.css"),
   );
   const htmlUri = vscode.Uri.joinPath(
     context.extensionUri,
-    "src",
-    "webview",
+    "media",
     "searchPanel.html",
   );
 
