@@ -80,10 +80,29 @@ export function init() {
     );
   }
 
+  // 現在の設定に基づいた「例題」の文字列を生成して返す
+  function getExampleText() {
+    const { startDelimiter, endDelimiter } = getValues();
+    if (!startDelimiter && !endDelimiter) {
+      return "abc";
+    }
+    // 2連デリミタのエスケープも考慮した例
+    return `a${startDelimiter}${startDelimiter}bc${startDelimiter}.?${endDelimiter}efg`;
+  }
+
   // 生成したパターンのプレビューを更新
+  updatePreview(); // 初回起動時
   function updatePreview() {
     const { input } = getValues();
-    const pattern = generatePattern(input);
+    const example = getExampleText();
+
+    // 1. プレースホルダーを常に最新の状態に更新
+    el.input.placeholder = `例: ${example}`;
+
+    // 2. プレビュー対象を決定（入力があればそれ、なければ例題）
+    const targetText = input || example;
+
+    const pattern = generatePattern(targetText);
     // nullチェックも行い ユーザーがわかるように通知
     el.preview.textContent = "生成結果: " + (pattern ?? "（エラーあり）");
   }
