@@ -75,10 +75,10 @@ export function init() {
   function getExampleText() {
     const { startDelimiter, endDelimiter } = getValues();
     if (!startDelimiter && !endDelimiter) {
-      return "abc";
+      return "<div>";
     }
     // 2連デリミタのエスケープも考慮した例
-    return `a${startDelimiter}${startDelimiter}bc${startDelimiter}.?${endDelimiter}efg`;
+    return `class=${startDelimiter}.*-active${endDelimiter}`;
   }
 
   // 生成したパターンのプレビューを更新
