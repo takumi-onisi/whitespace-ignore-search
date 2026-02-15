@@ -5,15 +5,34 @@
     <link rel="stylesheet" href="{{styleUri}}">
 </head>
 <body>
-    <h2>Whitespace Ignore Search</h2>
-    <p class="info">入力文字列に空白/改行の有無を許容する正規表現を自動挿入することで、空白を無視した検索パターンを作成可能です。</p>
-    <p class="info"><input type="text" id="startDelimiter" value="{{startDelim}}">と<input type="text" id="endDelimiter" value="{{endDelim}}">で囲った部分は保護区域となり、正規表現の使用が可能です。</p>
-    <textarea id="input" class="editor" placeholder="{{textareaPlaceholder}}"></textarea>
-    <div id="preview" class="output-preview"></div>
-    <button id="searchBtn" class="vscode">VS Code 検索パネルへ注入</button>
-    <div>
-        スペーサー設定: <input type="text" id="spacerPattern" value="{{spacerPattern}}">
-        <button id="resetSpacer">リセット</button>
+    <div class="container">
+        <h2>Whitespace Ignore Search</h2>
+        
+        <div class="section-info">
+            <p class="info">入力文字列にスペーサー<input type="text" id="spacerPattern" class="inline-input" value="{{spacerPattern}}"> を自動挿入。正規表現のメタ文字はエスケープされます。
+            </p>
+            <p class="info">
+                <input type="text" id="startDelimiter" class="inline-input" value="{{startDelim}}"> 
+                と 
+                <input type="text" id="endDelimiter" class="inline-input" value="{{endDelim}}"> 
+                で囲った部分は正規表現の使用が可能。スペーサーは挿入されず、入力文字がそのまま維持されます。
+            </p>
+        </div>
+
+        <div class="editor-group">
+            <textarea id="input" class="editor"></textarea>
+            <div id="preview" class="output-preview"></div>
+        </div>
+
+        <div class="action-area">
+            <button id="searchBtn" class="vscode-btn-primary">検索</button>
+        </div>
+
+        <div class="settings-footer">
+            <!-- <label for="spacerPattern">スペーサー設定:</label>
+            <input type="text" id="spacerPattern" class="inline-input" value="{{spacerPattern}}"> -->
+            <button id="resetSpacer" class="vscode-btn-secondary">リセット</button>
+        </div>
     </div>
     <script src="{{scriptUri}}"></script>
 </body>
