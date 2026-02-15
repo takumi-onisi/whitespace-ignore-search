@@ -104,19 +104,6 @@ function getHtmlContent(
   const safeEnd = escapeHtml(endDelim);
   const safeSpacer = escapeHtml(spacer);
 
-  let placeholderText = "";
-  if (startDelim === "" && endDelim === "") {
-    placeholderText =
-      "デリミタが未設定のため、正規表現のメタ文字はエスケープされ、入力された全文にスペーサーが挿入されます。";
-  } else {
-    placeholderText = `
-    開始デリミタ:${safeStart}
-    閉じデリミタ:${safeEnd}
-    デリミタ間は保護区間として扱われます。
-    保護区間では入力文字がそのまま検索欄に挿入されます。
-    例: ${safeStart}[^<>\s]+${safeEnd} `;
-  }
-
   let html = fs.readFileSync(htmlUri.fsPath, "utf8");
   // HTML内のプレースホルダーを実際のURIに置換
   html = html.replace("{{styleUri}}", styleUri.toString());
@@ -124,7 +111,6 @@ function getHtmlContent(
   html = html.replace(/{{startDelim}}/g, safeStart);
   html = html.replace(/{{endDelim}}/g, safeEnd);
   html = html.replace(/{{spacerPattern}}/g, escapeHtml(spacer));
-  html = html.replace("{{textareaPlaceholder}}", placeholderText);
 
   return html;
 }
