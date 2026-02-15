@@ -53,6 +53,44 @@ describe("Webview UI Integration", () => {
     expect(previewEl.textContent).toContain("a[\\s\\r\\n]*bc");
   });
 
+  it("デリミタが片方のみ入力されたとき、エラーメッセージが表示されるか", () => {
+    const startDelimiterEl = document.getElementById("startDelimiter") as HTMLInputElement;
+    const endDelimiterEl = document.getElementById("endDelimiter") as HTMLInputElement;
+    const previewEl = document.getElementById("preview") as HTMLElement;
+
+    // 片方だけ入力
+    startDelimiterEl.value = "@";
+    endDelimiterEl.value = ""; 
+    
+    // イベントを発生させる
+    startDelimiterEl.dispatchEvent(new Event("input"));
+
+    // 生成結果ではなく、エラー文言が含まれているか検証
+    expect(previewEl.textContent).toContain("両方とも空文字で設定してください。");
+  });
+
+  it("デリミタがエラー状態のとき、検索ボタンを押しても検索が実行されないこと", () => {
+    const postMessageSpy = vi.fn();
+    (globalThis as any).acquireVsCodeApi = () => ({ postMessage: postMessageSpy });
+    init();
+
+    const startDelimiterEl = document.getElementById("startDelimiter") as HTMLInputElement;
+    const endDelimiterEl = document.getElementById("endDelimiter") as HTMLInputElement;
+    const searchBtn = document.getElementById("searchBtn") as HTMLButtonElement;
+
+    // 不正なデリミタ設定
+    startDelimiterEl.value = "@";
+    endDelimiterEl.value = "";
+    
+    // 検索ボタンクリック
+    searchBtn.click();
+
+    // postMessageが 'search' コマンドで呼ばれていないことを確認
+    // (代わりに 'showError' が呼ばれている、などの検証も可)
+    const searchCalls = postMessageSpy.mock.calls.filter(call => call[0].command === "search");
+    expect(searchCalls.length).toBe(0);
+  });
+
   it("リセットボタンを押したとき、スペーサーがデフォルトに戻るか", () => {
     const spacerEl = document.getElementById(
       "spacerPattern",
