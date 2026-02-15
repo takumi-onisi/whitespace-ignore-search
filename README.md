@@ -1,20 +1,51 @@
 # Whitespace Ignore Search
 
-## 概要
-入力文字列を空白・改行無視の正規表現パターンに変換し、VSCode の検索欄に自動挿入する拡張機能です。  
-挿入された正規表現をひな形として、ユーザーはさらに詳細な検索や置換を **ファイル横断検索** で行うことができます。
+Regex search made easy. Automatically generate whitespace-tolerant patterns while keeping your specific regex logic intact.
 
-## インストール
-1. 生成された `.vsix` ファイルを任意のファルダに配置
-2. VSCode で `拡張機能 → ・・・ → VSIX からインストール` を選択
-3. インストール完了後、コマンドパレット（Ctrl+Shift+P）で `空白・改行無視検索パターン生成` を実行
+## 🚀 Overview
 
-## 使い方
-1. コマンドパレットで `空白・改行無視検索パターン生成` を選択
-2. 検索したい文字列を入力（正規表現も使用可能。ただし、正規表現として扱いたくないメタ文字はあらかじめエスケープしておく）
-3. VSCode の検索パネル（Ctrl+Shift+F）に空白・改行無視パターンが挿入され、検索開始
-4. 必要に応じてパターンを編集して検索・置換を実行
+Have you ever struggled to find a code snippet because of different indentation, line breaks, or extra spaces? This extension handles the complexity of regex by automatically inserting spacer patterns between characters.
 
-## 注意点
-- この拡張は検索パターンの生成に特化しており、直接の置換機能はありません
-- 正規表現に慣れていない場合、生成されたパターンをそのまま使用すると意図しない一致が発生する可能性があります
+## ✨ Key Features
+
+### 1. Auto-Spacer Insertion
+It converts raw text into a regex that ignores whitespaces and line breaks.
+- **Input:** `const a = 1`
+- **Output:** `c[\s]*o[\s]*n[\s]*s[\s]*t[\s]*a[\s]*=[\s]*1`
+
+### 2. Regex Protection Area
+Want to use actual Regex? Wrap it with delimiters (default: `@`). Inside these areas, characters are not escaped and no spacers are inserted.
+- **Input:** `class=@.*-active@`
+- **Output:** `c[\s]*l[\s]*a[\s]*s[\s]*s[\s]*=.*-active`
+
+### 3. Smart Escaping & Double Delimiters
+- **Auto-Escape:** Outside protected areas, meta characters like `.?+*` are automatically escaped (e.g., `.` becomes `\.`).
+- **Literal Delimiters:** If you need to search for the delimiter character itself, simply **double it**.
+  - **Input:** `email: @[a-z]+@@gmail.com@`
+  - **Result:** The `@@` is treated as a literal `@` inside the pattern.
+
+## 📖 Practical Examples
+
+| Input | Generated Regex (Example) | Description |
+| :--- | :--- | :--- |
+| `<div>` | `d[\s]*i[\s]*v[\s]*>[\s]*` | Find tags regardless of formatting |
+| `@<.*?>@` | `<.*?>` | Pure Regex search |
+| `id=@id-[0-9]+@` | `i[\s]*d[\s]*=[\s]*id-[0-9]+` | Literal string + Regex pattern |
+| `price: @@100` | `p[\s]*r[\s]*i[\s]*c[\s]*e[\s]*:[\s]*@[\s]*1[\s]*0[\s]*0` | Searching for a literal `@` |
+
+## 🛠 Usage
+
+1. Open the **Whitespace Ignore Search** panel in VS Code.
+2. Enter the text you want to search for.
+3. Adjust **Delimiters** or the **Spacer Pattern** (default: `[\s\r\n]*`) if needed.
+4. Click **Inject** to apply the generated pattern to the global VS Code Search Panel.
+
+## ⚙️ Configuration
+
+- **Start/End Delimiter**: The markers for protection areas. Default is `@`.
+- **Spacer Pattern**: The regex inserted between characters. Default is `[\s\r\n]*`.
+- **Reset**: Click the reset button under the spacer input to revert to default settings.
+
+---
+
+**Developed with ❤️ for efficient coding.**

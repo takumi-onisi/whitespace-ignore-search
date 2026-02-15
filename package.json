@@ -1,8 +1,9 @@
 {
   "name": "whitespace-ignore-search",
   "displayName": "whitespace-ignore-search",
-  "description": "入力文字列を空白・改行無視の正規表現パターンに変換し、VSCode の検索欄に自動挿入する拡張機能。作成されたパターンを基にファイル横断検索や置換が可能です。",
-  "version": "0.0.1",
+  "description": "Automatically generate whitespace-tolerant patterns while keeping your specific regex logic intact.",
+  "publisher": "takumi-onisi",
+  "version": "0.1.5",
   "engines": {
     "vscode": "^1.105.0"
   },
@@ -19,7 +20,7 @@
     "commands": [
       {
         "command": "extension.showIgnoreWhitespacePanel",
-        "title": "空白無視＋正規表現検索"
+        "title": "Whitespace Ignore Search"
       }
     ]
   },
