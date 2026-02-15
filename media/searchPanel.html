@@ -1,39 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{styleUri}}">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="{{styleUri}}" />
+  </head>
+  <body>
     <div class="container">
-        <h2>Whitespace Ignore Search</h2>
-        
-        <div class="section-info">
-            <p class="info">入力文字列にスペーサー<input type="text" id="spacerPattern" class="inline-input" value="{{spacerPattern}}"> を自動挿入。正規表現のメタ文字はエスケープされます。
-            </p>
-            <p class="info">
-                <input type="text" id="startDelimiter" class="inline-input" value="{{startDelim}}"> 
-                と 
-                <input type="text" id="endDelimiter" class="inline-input" value="{{endDelim}}"> 
-                で囲った部分は正規表現の使用が可能。スペーサーは挿入されず、入力文字がそのまま維持されます。
-            </p>
-        </div>
+      <h2>Whitespace Ignore Search</h2>
 
-        <div class="editor-group">
-            <textarea id="input" class="editor"></textarea>
-            <div id="preview" class="output-preview"></div>
-        </div>
+      <div class="section-info">
+        <p class="info">
+          入力文字列にスペーサー
+          <span class="spacer-container">
+            <input
+              type="text"
+              id="spacerPattern"
+              class="inline-input"
+              value="{{spacerPattern}}"
+            />
+            <button id="resetSpacer" class="vscode-btn-secondary mini-reset">
+              リセット
+            </button>
+          </span>
+          を自動挿入。正規表現のメタ文字はエスケープされます。
+        </p>
+        <p class="info">
+          <input
+            type="text"
+            id="startDelimiter"
+            class="inline-input"
+            value="{{startDelim}}"
+          />
+          と
+          <input
+            type="text"
+            id="endDelimiter"
+            class="inline-input"
+            value="{{endDelim}}"
+          />
+          で囲った部分は正規表現の使用が可能。入力文字がそのまま維持されます。
+        </p>
+      </div>
 
-        <div class="action-area">
-            <button id="searchBtn" class="vscode-btn-primary">検索</button>
-        </div>
+      <div class="editor-group">
+        <textarea id="input" class="editor"></textarea>
+        <div id="preview" class="output-preview"></div>
+      </div>
 
-        <div class="settings-footer">
-            <!-- <label for="spacerPattern">スペーサー設定:</label>
-            <input type="text" id="spacerPattern" class="inline-input" value="{{spacerPattern}}"> -->
-            <button id="resetSpacer" class="vscode-btn-secondary">リセット</button>
-        </div>
+      <div class="action-area">
+        <button id="searchBtn" class="vscode-btn-primary">検索</button>
+      </div>
     </div>
     <script src="{{scriptUri}}"></script>
-</body>
+  </body>
 </html>

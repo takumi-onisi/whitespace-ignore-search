@@ -1,81 +1,153 @@
 :root {
+  /* マージン体系 */
+  --space-s: 4px; /* 非常に近い要素用 */
+  --space-m: 8px; /* 基本の要素間 */
+  --space-l: 16px; /* セクション間の大きな余白 */
+
+  /* VS Codeテーマ変数のフォールバック（未定義時のための予備） */
   --vscode-bg: #1e1e1e;
-  --vscode-panel: #252526;
   --vscode-foreground: #d4d4d4;
-  --vscode-border: #3c3c3c;
-  --vscode-button: #0e639c;
-  --vscode-muted: #9a9a9a;
+  --vscode-input-bg: #3c3c3c;
+  --vscode-input-fg: #cccccc;
 }
+
 body {
-  background: var(--vscode-bg);
-  color: var(--vscode-foreground);
-  font-family: sans-serif;
-  padding: 16px;
+  background-color: var(--vscode-editor-background, var(--vscode-bg));
+  color: var(--vscode-editor-foreground, var(--vscode-foreground));
+  font-family: var(--vscode-font-family, sans-serif);
+  padding: var(--space-l);
+  margin: 0;
 }
 
-input[type="text"] {
-    background: var(--vscode-input-background);
-    color: var(--vscode-input-foreground);
-    border: 1px solid var(--vscode-input-border);
-    padding: 2px 4px;
-    font-family: monospace;
-    box-sizing: border-box;
-    outline: none;
+h2 {
+  margin-top: 0;
+  margin-bottom: var(--space-m);
+  font-size: 1.2em;
+  font-weight: normal;
 }
 
-input[type="text"]:focus {
-    border: 1px solid var(--vscode-focusBorder);
+/* 説明セクションの余白 */
+.section-info {
+  margin-bottom: var(--space-l);
 }
 
-/* デリミタ用：最低1文字分 */
-#startDelimiter, #endDelimiter {
-    min-width: 2ch; /* 1文字 + 余裕 */
+.info {
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground, #9a9a9a);
+  margin-top: 0;
+  margin-bottom: var(--space-s);
+  line-height: 1.8;
 }
 
-/* スペーサー用：最低7文字分 */
-#spacerPattern {
-    min-width: 8ch; /* 7文字 + 余裕 */
+/* エディタ周り */
+.editor-group {
+  margin-bottom: var(--space-l);
 }
 
 .editor {
   width: 100%;
   min-height: 120px;
-  background: var(--vscode-panel);
-  color: var(--vscode-foreground);
-  border: 1px solid var(--vscode-border);
-  padding: 8px;
-  font-family: monospace;
+  background: var(--vscode-input-background, #252526);
+  color: var(--vscode-input-foreground, #d4d4d4);
+  border: 1px solid var(--vscode-input-border, #3c3c3c);
+  padding: var(--space-m);
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: var(--vscode-editor-font-size, 13px);
   resize: vertical;
   box-sizing: border-box;
+  outline: none;
 }
+
+.editor:focus {
+  border-color: var(--vscode-focusBorder);
+}
+
+/* プレビューエリア */
 .output-preview {
-  margin-top: 10px;
-  padding: 8px;
-  background: #000;
-  color: #aaa;
+  margin-top: var(--space-s); /* エディタと密着させる */
+  padding: var(--space-m);
+  background: var(--vscode-textCodeBlock-background, #000);
+  color: var(--vscode-debugTokenExpression-string, #aaa);
   font-size: 11px;
-  border: 1px solid #333;
+  font-family: monospace;
+  border: 1px solid var(--vscode-input-border, #333);
+  border-top: none; /* エディタの枠線とつなげる */
   white-space: pre-wrap;
   word-break: break-all;
 }
-.controls {
-  margin-top: 12px;
-  display: flex;
-  gap: 8px;
+
+/* アクションエリア */
+.action-area {
+  margin-bottom: var(--space-l);
+  text-align: center;
 }
-button.vscode {
-  background: var(--vscode-button);
-  color: white;
-  border: none;
-  padding: 8px 16px;
+
+/* ボタン共通設定 */
+button {
+  padding: 6px 14px;
   border-radius: 2px;
   cursor: pointer;
+  border: none;
+  font-size: 13px;
 }
-.info {
-  font-size: 11px;
-  color: var(--vscode-muted);
-  margin-top: 8px;
+
+.vscode-btn-primary {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #ffffff);
 }
-code {
-  color: #569cd6;
+
+.vscode-btn-primary:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+
+.vscode-btn-secondary {
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  color: var(--vscode-button-secondaryForeground, #ffffff);
+  margin-left: var(--space-s);
+}
+
+/* リセットボタンを内包するスペーサーの表示領域 */
+.spacer-container {
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline; /* 他の文字と高さを合わせる */
+  padding-bottom: 20px; /* ボタンの高さ + 隙間分、下に余白を確保 */
+  margin-right: 4px;
+}
+
+/* リセットボタン：入力欄の真下に絶対配置 */
+.mini-reset {
+  position: absolute;
+  right: 0;
+  bottom: 2px; /* 親のpadding-bottomの中に収まる */
+  font-size: 10px; /* 少し小さめにして控えめに */
+  padding: 2px;
+  height: 18px;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.mini-reset:hover {
+  opacity: 1;
+}
+
+/* インライン入力欄の調整 */
+.inline-input {
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  padding: 2px 4px;
+  font-family: monospace;
+  vertical-align: middle;
+}
+
+#startDelimiter,
+#endDelimiter {
+  width: 3ch;
+  text-align: center;
+}
+
+#spacerPattern {
+  width: 10ch;
 }
