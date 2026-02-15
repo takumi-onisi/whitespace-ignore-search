@@ -53,18 +53,9 @@ export function init() {
     const trimmedEnd = endDelimiter.trim();
     const currentSpacer = spacer || ""; // 空なら空文字
 
-    // 入力値のチェック
+    // デリミタが空文字かどうかをチェック
     const isStartEmpty = trimmedStart === "";
     const isEndEmpty = trimmedEnd === "";
-    // 片方のみ入力されている場合（エラー）
-    if (isStartEmpty !== isEndEmpty) {
-      vscode.postMessage({
-        command: "showError",
-        message: "片側のみのデリミタの設定はできません。",
-      });
-      return null;
-    }
-
     // 開始終了が両方とも空白の場合
     if (isStartEmpty && isEndEmpty) {
       // 文字列すべてにスペーサーを挿入して返す
@@ -94,17 +85,35 @@ export function init() {
   updatePreview(); // 初回起動時
   function updatePreview() {
     const { input } = getValues();
+    const error = getDelimiterError();
     const example = getExampleText();
 
-    // 1. プレースホルダーを常に最新の状態に更新
+    // プレースホルダーを常に最新の状態に更新
     el.input.placeholder = `例: ${example}`;
 
-    // 2. プレビュー対象を決定（入力があればそれ、なければ例題）
+    // デリミタのチェック
+    if (error) {
+      el.preview.textContent = `生成結果: （エラー） ${error}`;
+      return; // 次の処理に進まない
+    }
+
+    // プレビュー対象を決定（入力があればそれ、なければ例題）
     const targetText = input || example;
 
     const pattern = generatePattern(targetText);
     // nullチェックも行い ユーザーがわかるように通知
     el.preview.textContent = "生成結果: " + (pattern ?? "（エラーあり）");
+  }
+
+  // 入力されたデリミタのチェック 正常なら null を返す
+  function getDelimiterError(): string | null {
+    const { startDelimiter, endDelimiter } = getValues();
+    const s = startDelimiter.trim();
+    const e = endDelimiter.trim();
+    if ((s === "") !== (e === "")) {
+      return "空文字をデリミタに設定する場合は、開始と終了両方とも空文字で設定してください。";
+    }
+    return null;
   }
 
   // ユーザーが設定したデリミタを保存する
@@ -140,9 +149,17 @@ export function init() {
     });
   }
 
-  // 生成したパターンをVSCodeの検索欄に送る
+  // 検索実行ボタンを押したときの処理
   function handleSearchButtonClick() {
+    // デリミタのチェック
+    const error = getDelimiterError();
+    if (error) {
+      vscode.postMessage({ command: "showError", message: error });
+      return;
+    }
+
     const { input } = getValues();
+    // 検索パターンを生成
     const pattern = generatePattern(input);
 
     // メッセージを送信
