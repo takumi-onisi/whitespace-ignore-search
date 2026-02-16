@@ -1,0 +1,6 @@
+{
+  "command.title": "空白を無視して検索",
+  "error.delimiterMismatch": "デリミタを設定する場合は、開始と閉じの両方を入力してください。",
+  "error.generic": "エラーが発生しました: {0}",
+  "searchPanel.title": "Whitespace Ignore Search"
+}

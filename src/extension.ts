@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
       () => {
         const panel = vscode.window.createWebviewPanel(
           "ignoreWhitespace",
-          "空白無視検索パターン作成",
+          vscode.l10n.t("Whitespace Ignore Search"),
           vscode.ViewColumn.Two,
           {
             enableScripts: true,
