@@ -102,7 +102,7 @@ export function init() {
     el.input.placeholder = `${i18n.eg}: ${example}`;
 
     // デリミタのチェック
-    if (error) {
+    if (error !== null) {
       el.preview.textContent = `${i18n.error}: ${error}`;
       return; // 次の処理に進まない
     }
