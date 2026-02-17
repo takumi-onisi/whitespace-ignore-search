@@ -1,0 +1,14 @@
+{
+  "Whitespace Ignore Search": "空白を無視して検索",
+  "en": "ja",
+  "Insert spacer": "入力文字列にスペーサー",
+  "between characters. Meta characters are escaped.": "を自動挿入。正規表現のメタ文字はエスケープされます。",
+  "Reset": "リセット",
+  "and": "と",
+  "treats content as raw Regex. Text is preserved.": "で囲った部分は正規表現の使用が可能。入力文字がそのまま維持されます。",
+  "Search": "検索",
+  "e.g.": "例",
+  "Generated Result: ": "生成結果: ",
+  "Error": "エラー",
+  "Delimiters must be either both filled or both empty.": "空文字をデリミタに設定する場合は、開始と終了両方とも空文字で設定してください。"
+}

@@ -102,15 +102,42 @@ function getHtmlContent(
   // エスケープ処理
   const safeStart = escapeHtml(startDelim);
   const safeEnd = escapeHtml(endDelim);
-  const safeSpacer = escapeHtml(spacer);
 
   let html = fs.readFileSync(htmlUri.fsPath, "utf8");
-  // HTML内のプレースホルダーを実際のURIに置換
+  // HTML内のプレースホルダーを実際の値に置換
+  html = html.replace("{{lang}}", vscode.l10n.t("en"));
+  html = html.replace("{{infoSpacerPrefix}}", vscode.l10n.t("Insert spacer"));
+  html = html.replace(
+    "{{infoSpacerSuffix}}",
+    vscode.l10n.t("between characters. Meta characters are escaped."),
+  );
+  html = html.replace("{{btnReset}}", vscode.l10n.t("Reset"));
+  html = html.replace("{{infoDelimMid}}", vscode.l10n.t("and"));
+  html = html.replace(
+    "{{infoDelimSuffix}}",
+    vscode.l10n.t("treats content as raw Regex. Text is preserved."),
+  );
+  html = html.replace("{{btnSearch}}", vscode.l10n.t("Search"));
   html = html.replace("{{styleUri}}", styleUri.toString());
   html = html.replace("{{scriptUri}}", scriptUri.toString());
   html = html.replace(/{{startDelim}}/g, safeStart);
   html = html.replace(/{{endDelim}}/g, safeEnd);
   html = html.replace(/{{spacerPattern}}/g, escapeHtml(spacer));
+
+  // ブラウザ環境で動作するスクリプト内の文章の多言語対応
+  // 翻訳オブジェクトを準備
+  const l10nData = {
+    eg: vscode.l10n.t("e.g."),
+    result: vscode.l10n.t("Generated Result: "),
+    error: vscode.l10n.t("Error"),
+    delimiterError: vscode.l10n.t("Delimiters must be either both filled or both empty."),
+  };
+
+  // <script> タグを生成（window.WEBVIEW_L10N にデータを格納）
+  const l10nScript = `<script>window.WEBVIEW_L10N = ${JSON.stringify(l10nData)};</script>`;
+
+  // HTML内の </head> の直前に挿入する
+  html = html.replace("</head>", `${l10nScript}\n</head>`);
 
   return html;
 }

@@ -19,6 +19,16 @@ if (typeof window !== "undefined") {
 
 // メインロジックを init 関数にまとめる
 export function init() {
+  // 翻訳済みのテキスト
+  interface WebviewL10n {
+    eg: string;
+    result: string;
+    error: string;
+    delimiterError: string;
+  }
+  // グローバル変数を参照
+  const i18n = (window as any).WEBVIEW_L10N as WebviewL10n;
+
   const vscode = acquireVsCodeApi();
 
   // 起動時に一度だけ取得して固定する（キャッシュ）
@@ -89,11 +99,11 @@ export function init() {
     const example = getExampleText();
 
     // プレースホルダーを常に最新の状態に更新
-    el.input.placeholder = `例: ${example}`;
+    el.input.placeholder = `${i18n.eg}: ${example}`;
 
     // デリミタのチェック
     if (error) {
-      el.preview.textContent = `生成結果: （エラー） ${error}`;
+      el.preview.textContent = `${i18n.error}: ${error}`;
       return; // 次の処理に進まない
     }
 
@@ -102,7 +112,8 @@ export function init() {
 
     const pattern = generatePattern(targetText);
     // nullチェックも行い ユーザーがわかるように通知
-    el.preview.textContent = "生成結果: " + (pattern ?? "（エラーあり）");
+    const resultText = pattern ?? i18n.error;
+    el.preview.textContent = `${i18n.result}${resultText}`;
   }
 
   // 入力されたデリミタのチェック 正常なら null を返す
@@ -111,7 +122,7 @@ export function init() {
     const s = startDelimiter.trim();
     const e = endDelimiter.trim();
     if ((s === "") !== (e === "")) {
-      return "空文字をデリミタに設定する場合は、開始と終了両方とも空文字で設定してください。";
+      return `${i18n.delimiterError}`;
     }
     return null;
   }

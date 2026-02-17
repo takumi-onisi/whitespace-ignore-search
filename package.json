@@ -16,6 +16,7 @@
     "dist",
     "media"
   ],
+  "l10n": "./l10n",
   "contributes": {
     "commands": [
       {
