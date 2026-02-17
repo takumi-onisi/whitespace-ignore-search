@@ -6,6 +6,14 @@ Regex search made easy. Automatically generate whitespace-tolerant patterns whil
 
 Have you ever struggled to find a code snippet because of different indentation, line breaks, or extra spaces? This extension handles the complexity of regex by automatically inserting spacer patterns between characters.
 
+## 🏁 How to Start
+
+You can launch the search panel using the following command:
+
+1. Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (macOS) to open the **Command Palette**.
+2. Type **"Whitespace Ignore Search"** and select the command.
+3. The dedicated search panel will open in a new tab.
+
 ## ✨ Key Features
 
 ### 1. Auto-Spacer Insertion
@@ -35,10 +43,11 @@ Want to use actual Regex? Wrap it with delimiters (default: `@`). Inside these a
 
 ## 🛠 Usage
 
-1. Open the **Whitespace Ignore Search** panel in VS Code.
-2. Enter the text you want to search for.
-3. Adjust **Delimiters** or the **Spacer Pattern** (default: `[\s\r\n]*`) if needed.
-4. Click **Inject** to apply the generated pattern to the global VS Code Search Panel.
+1. Open the panel via the **Command Palette**.
+2. Enter the text you want to search for in the **Input** area.
+3. Preview the generated pattern in real-time.
+4. Adjust **Delimiters** or the **Spacer Pattern** (default: `[\s\r\n]*`) if needed.
+5. Click **Search** to apply the generated pattern to the global VS Code Search Panel.
 
 ## ⚙️ Configuration
 
