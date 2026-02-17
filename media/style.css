@@ -108,10 +108,24 @@ button {
 
 /* リセットボタンを内包するスペーサーの表示領域 */
 .spacer-container {
+  /* リセットボタンのサイズとレイアウト用変数 */
+  --reset-btn-height: 18px;
+  --reset-btn-font-size: 10px;
+  --reset-btn-gap: 4px; /* 入力欄とボタンの間の隙間 */
+  --reset-btn-offset: 2px; /* 下端からのオフセット */
+
+  /* 親コンテナが確保すべき下の余白（ボタン高さ + 隙間 + オフセット） */
+  --spacer-bottom-padding: calc(
+    var(--reset-btn-height) + var(--reset-btn-gap) + var(--reset-btn-offset)
+  );
+
+  /* リセットボタンのアイコンのサイズ */
+  --icon-size: 8px;
+
   display: inline-block;
   position: relative;
   vertical-align: baseline; /* 他の文字と高さを合わせる */
-  padding-bottom: 20px; /* ボタンの高さ + 隙間分、下に余白を確保 */
+  padding-bottom: var(--spacer-bottom-padding); /* ボタンの高さ + 隙間分、下に余白を確保 */
   margin-right: 4px;
 }
 
@@ -119,17 +133,49 @@ button {
 .mini-reset {
   position: absolute;
   right: 0;
-  bottom: 2px; /* 親のpadding-bottomの中に収まる */
-  font-size: 10px; /* 少し小さめにして控えめに */
-  padding: 2px;
-  height: 18px;
+  bottom: var(--reset-btn-offset); /* 親のpadding-bottomの中に収まる */
+  font-size: var(--reset-btn-font-size); /* 少し小さめにして控えめに */
+  /* padding: 2px; */
+  height: var(--reset-btn-height);
   line-height: 1;
-  white-space: nowrap;
+  /* レイアウト: テキストとアイコンを横並びにする */
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
   opacity: 0.8;
 }
 
 .mini-reset:hover {
   opacity: 1;
+}
+
+/* 擬似要素でアイコンを作成（時計回りの矢印風） */
+.mini-reset::after {
+  content: "";
+  width: var(--icon-size);
+  height: var(--icon-size);
+  border: calc(var(--icon-size) / 7) solid currentColor; /* 太さをサイズに比例させる */
+  border-right-color: transparent; /* 一部を消して隙間を作る */
+  border-radius: 50%;
+  position: relative;
+  transform: rotate(-62deg); /* 切れ目の位置を調整 */
+}
+
+/* 矢印の先端（三角形） */
+.mini-reset::before {
+  content: "";
+  position: absolute;
+  right: calc(var(--icon-size) * -0.08); /* アイコンの右端に合わせる */
+  top: calc(var(--icon-size) * 0.31);
+  border-left: calc(var(--icon-size) * 0.6) solid currentColor;
+  border-top: calc(var(--icon-size) * 0.4) solid transparent;
+  border-bottom: calc(var(--icon-size) * 0.4) solid transparent;
+  transform: rotate(-110deg);
 }
 
 /* インライン入力欄の調整 */
