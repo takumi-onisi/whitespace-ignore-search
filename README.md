@@ -2,6 +2,12 @@
 
 Regex search made easy. Automatically generate whitespace-tolerant patterns while keeping your specific regex logic intact.
 
+## 💡 The Inspiration
+
+For developers who use **Adobe Dreamweaver**, the **"Ignore Whitespace"** search option is an indispensable feature for its reliability and ease of use. 
+
+This extension brings that same powerful search experience to **VS Code**. It allows you to search across different formatting styles without the hassle of manual regex coding, making it the perfect bridge for developers who value the efficiency of both tools.
+
 ## 🚀 Overview
 
 Have you ever struggled to find a code snippet because of different indentation, line breaks, or extra spaces? This extension handles the complexity of regex by automatically inserting spacer patterns between characters.
