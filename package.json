@@ -1,14 +1,31 @@
 {
   "name": "whitespace-ignore-search",
-  "displayName": "whitespace-ignore-search",
+  "displayName": "Whitespace Ignore Search",
   "description": "Automatically generate whitespace-tolerant patterns while keeping your specific regex logic intact.",
   "publisher": "takumi-onisi",
   "version": "0.1.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/takumi-onisi/whitespace-ignore-search.git"
+  },
   "engines": {
     "vscode": "^1.105.0"
   },
+  "license": "MIT",
+  "icon": "media/whitespace-ignore-search-icon.png", 
+  "homepage": "https://github.com/takumi-onisi/whitespace-ignore-search#readme",
+  "bugs": {
+    "url": "https://github.com/takumi-onisi/whitespace-ignore-search/issues"
+  },
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "search",
+    "regex",
+    "whitespace",
+    "ignore whitespace",
+    "productivity"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
