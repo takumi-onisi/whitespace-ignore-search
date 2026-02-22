@@ -24,6 +24,9 @@ You can launch the search panel using the following command:
 
 ### 1. Auto-Spacer Insertion
 It converts raw text into a regex that ignores whitespaces and line breaks.
+
+> **Note:** For readability in the examples below, the spacer is shown as `[\s]*`. However, the **default pattern is `[\s\r\n]*`**, ensuring it matches across multiple lines. You can fully customize this pattern in the settings.
+
 - **Input:** `const a = 1`
 - **Output:** `c[\s]*o[\s]*n[\s]*s[\s]*t[\s]*a[\s]*=[\s]*1`
 
@@ -40,9 +43,11 @@ Want to use actual Regex? Wrap it with delimiters (default: `@`). Inside these a
 
 ## 📖 Practical Examples
 
+> *Examples below use `[\s]*` for simplicity, but the actual output includes multi-line support by default.*
+
 | Input | Generated Regex (Example) | Description |
 | :--- | :--- | :--- |
-| `<div>` | `d[\s]*i[\s]*v[\s]*>[\s]*` | Find tags regardless of formatting |
+| `<div>` | `d[\s]*i[\s]*v[\s]*>[\s]*` | Find tags regardless of formatting or line breaks |
 | `@<.*?>@` | `<.*?>` | Pure Regex search |
 | `id=@id-[0-9]+@` | `i[\s]*d[\s]*=[\s]*id-[0-9]+` | Literal string + Regex pattern |
 | `price: @@100` | `p[\s]*r[\s]*i[\s]*c[\s]*e[\s]*:[\s]*@[\s]*1[\s]*0[\s]*0` | Searching for a literal `@` |
