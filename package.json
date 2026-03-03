@@ -3,7 +3,7 @@
   "displayName": "Whitespace Ignore Search",
   "description": "Automatically generate whitespace-tolerant patterns while keeping your specific regex logic intact.",
   "publisher": "takumi-onisi",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/takumi-onisi/whitespace-ignore-search.git"
