@@ -31,7 +31,7 @@ It converts raw text into a regex that ignores whitespaces and line breaks.
 - **Output:** `c[\s]*o[\s]*n[\s]*s[\s]*t[\s]*a[\s]*=[\s]*1`
 
 ### 2. Regex Protection Area
-Want to use actual Regex? Wrap it with delimiters (default: `@`). Inside these areas, characters are not escaped and no spacers are inserted.
+Want to use actual Regex? Wrap it with delimiters (e.g., `@`). Inside these areas, characters are not escaped and no spacers are inserted.
 - **Input:** `class=@.*-active@`
 - **Output:** `c[\s]*l[\s]*a[\s]*s[\s]*s[\s]*=.*-active`
 
@@ -62,7 +62,7 @@ Want to use actual Regex? Wrap it with delimiters (default: `@`). Inside these a
 
 ## ⚙️ Configuration
 
-- **Start/End Delimiter**: The markers for protection areas. Default is `@`.
+- **Start/End Delimiter**: The markers for protection areas. Default is `@@`.
 - **Spacer Pattern**: The regex inserted between characters. Default is `[\s\r\n]*`.
 - **Reset**: Click the reset button under the spacer input to revert to default settings.
 
